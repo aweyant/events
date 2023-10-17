@@ -1,8 +1,8 @@
 Package: events
-Title: What the Package Does (One Line, Title Case)
+Title: Tools for identifying, analyzing, and plotting events from time series
 Version: 0.0.0.9000
 Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
+    person("Alexander", "Weyant", , "aweyant@ucsd.edu", role = c("aut", "cre"),
            comment = c(ORCID = "YOUR-ORCID-ID"))
 Description: What the package does (one paragraph).
 License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
