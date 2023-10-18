@@ -15,21 +15,30 @@ which has been measured at regular time intervals.}
 which an observation would be considered part of an event}
 }
 \value{
-unknown for now...
+A list containing:
+\itemize{
+\item event_summaries_df, a data.frame() -
+Each row provides a basic summary of events, including their starting
+indices, durations, magnitudes, maxima, and whether or not the duration,
+magnitude, and maximum are to be taken at face value}
 }
 \description{
 Create events from a regularly-sampled time series which is represented as a
 vector
 }
 \examples{
-v <- c(333,587,0,201,82,225) # perhaps precipitation measured in 10ths of mm
+v <- c(333,587,0,201,82,225,70,62,47,101,187,NA,NA,126,222,86,NA,125)
+# ^^ perhaps precipitation measured in 10ths of mm, with some missing values
+#' in the mix
 create_events_from_vector(v, 100)
 
 \dontrun{
-  start_index length magnitude maximum
-1           1      2       720     487
-2           4      1       101     101
-3           6      1       125     125
-4          10      2        88      87
+  start_index length magnitude maximum length_uncertain
+1           1      2       487     487             TRUE
+2           4      1       101     101            FALSE
+3           6      1       125     125            FALSE
+4          10      2        88      87             TRUE
+5          14      2       148     122             TRUE
+6          18      1        25      25             TRUE
 }
 }
