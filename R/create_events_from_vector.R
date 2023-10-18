@@ -12,11 +12,18 @@
 #' @examples
 #' v <- c(333,587,0,201,82,225) # perhaps precipitation measured in 10ths of mm
 #' create_events_from_vector(v, 100)
-#' # ... some output ...
+#'
+#' \dontrun{
+#'   start_index length magnitude maximum
+#' 1           1      2       720     487
+#' 2           4      1       101     101
+#' 3           6      1       125     125
+#' 4          10      2        88      87
+#' }
 create_events_from_vector <- function(v, threshold) {
   temp_rle <- rle(ifelse(v > threshold,1,0))
   end_indices <- cumsum(temp_rle$lengths)[which(temp_rle$values != 0)] # end
-  #' indices of runs
+  # indices of runs
   lengths <- temp_rle$lengths[which(temp_rle$values == 1)] # durations
   start_indices <- (end_indices - lengths) + 1 # start indices of runs
 
@@ -25,17 +32,20 @@ create_events_from_vector <- function(v, threshold) {
                do.call(rbind,
                        lapply(X = seq_along(start_indices),
                               FUN = function(i){
-                                vals = (v-threshold)[start_indices[i]:end_indices[i]]
-                                data.frame(magnitude = sum(vals),
-                                           maximum = max(vals))
+                                # vals = (v-threshold)[start_indices[i]:end_indices[i]]
+                                # data.frame(magnitude = sum(vals),
+                                #            maximum = max(vals))
+
+                                vals = (v-threshold)[(start_indices[i]-1):(end_indices[i]+1)]
+                                #length_uncertain = ifelse(length(vals[1]) == 0 | is.na(vals[1]) | is.na(vals[length(vals)]), TRUE, FALSE)
+                                data.frame(magnitude = sum(vals[c(-1,-length(vals))]),
+                                           maximum = max(vals[c(-1,-length(vals))]),
+                                           length_uncertain = ifelse(start_indices[i] == 1 | is.na(vals[1]) | is.na(vals[length(vals)]), TRUE, FALSE))
                               }))
   ))
 }
 
-# scratch
-v <- c(333,587,0,201,82,225,70,62,47,101,187)
-threshold <- 100
-create_events_from_vector(v, threshold)
+
 
 
 

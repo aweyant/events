@@ -24,5 +24,12 @@ vector
 \examples{
 v <- c(333,587,0,201,82,225) # perhaps precipitation measured in 10ths of mm
 create_events_from_vector(v, 100)
-# ... some output ...
+
+\dontrun{
+  start_index length magnitude maximum
+1           1      2       720     487
+2           4      1       101     101
+3           6      1       125     125
+4          10      2        88      87
+}
 }
