@@ -21,6 +21,7 @@
 #' create_events_from_vector(v, 100)
 #'
 #' \dontrun{
+#' $event_summaries_df
 #'   start_index length magnitude maximum length_uncertain
 #' 1           1      2       487     487             TRUE
 #' 2           4      1       101     101            FALSE

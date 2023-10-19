@@ -33,6 +33,7 @@ v <- c(333,587,0,201,82,225,70,62,47,101,187,NA,NA,126,222,86,NA,125)
 create_events_from_vector(v, 100)
 
 \dontrun{
+$event_summaries_df
   start_index length magnitude maximum length_uncertain
 1           1      2       487     487             TRUE
 2           4      1       101     101            FALSE
