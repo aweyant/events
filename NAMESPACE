@@ -2,3 +2,7 @@
 
 export(create_events_from_vector)
 export(dhgeom)
+export(hgeom)
+export(phgeom)
+export(qhgeom)
+export(rhgeom)
