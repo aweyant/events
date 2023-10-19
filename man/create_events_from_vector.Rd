@@ -8,8 +8,8 @@ vector}
 create_events_from_vector(v, threshold)
 }
 \arguments{
-\item{v}{A vector (typically numeric) representing some variable of interest
-which has been measured at regular time intervals.}
+\item{v}{A vector (assumed to be numeric) representing some variable of
+interest which has been measured at regular time intervals.}
 
 \item{threshold}{A numeric threshold which defines the minimum value for
 which an observation would be considered part of an event}
@@ -17,6 +17,8 @@ which an observation would be considered part of an event}
 \value{
 A list containing:
 \itemize{
+\item threshold, the vector above which the series was truncated in order to
+define events
 \item event_summaries_df, a data.frame() -
 Each row provides a basic summary of events, including their starting
 indices, durations, magnitudes, maxima, and whether or not the duration,
@@ -33,6 +35,9 @@ v <- c(333,587,0,201,82,225,70,62,47,101,187,NA,NA,126,222,86,NA,125)
 create_events_from_vector(v, 100)
 
 \dontrun{
+$threshold
+[1] 100
+
 $event_summaries_df
   start_index length magnitude maximum length_uncertain
 1           1      2       487     487             TRUE

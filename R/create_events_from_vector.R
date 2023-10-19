@@ -1,13 +1,15 @@
 #' Create events from a regularly-sampled time series which is represented as a
 #' vector
 #'
-#' @param v A vector (typically numeric) representing some variable of interest
-#' which has been measured at regular time intervals.
+#' @param v A vector (assumed to be numeric) representing some variable of
+#' interest which has been measured at regular time intervals.
 #' @param threshold A numeric threshold which defines the minimum value for
 #' which an observation would be considered part of an event
 #'
 #' @return A list containing:
 #' \itemize{
+#' \item threshold, the vector above which the series was truncated in order to
+#' define events
 #' \item event_summaries_df, a data.frame() -
 #' Each row provides a basic summary of events, including their starting
 #' indices, durations, magnitudes, maxima, and whether or not the duration,
@@ -21,6 +23,9 @@
 #' create_events_from_vector(v, 100)
 #'
 #' \dontrun{
+#' $threshold
+#' [1] 100
+#'
 #' $event_summaries_df
 #'   start_index length magnitude maximum length_uncertain
 #' 1           1      2       487     487             TRUE
@@ -52,7 +57,8 @@ create_events_from_vector <- function(v, threshold) {
                                                           length_uncertain = ifelse(start_indices[i] == 1 | is.na(vals[1]) | is.na(vals[length(vals)]), TRUE, FALSE))
                                              }))
   )
-  return(list(event_summaries_df = event_summaries_df))
+  return(list(threshold = threshold,
+              event_summaries_df = event_summaries_df))
 }
 
 
