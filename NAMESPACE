@@ -3,6 +3,7 @@
 export(create_events_from_vector)
 export(dhgeom)
 export(hgeom)
+export(janky_mle_hgeom)
 export(phgeom)
 export(qhgeom)
 export(rhgeom)
