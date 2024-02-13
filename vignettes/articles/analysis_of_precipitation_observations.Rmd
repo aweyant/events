@@ -1,0 +1,14 @@
+---
+title: "analysis_of_precipitation_observations"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+library(events)
+```
