@@ -48,8 +48,7 @@ psmp <- function(x_lower = 0,
                  alpha,
                  beta,
                  x_lims = NULL,
-                 y_lims = NULL,
-                 tol=10^(-6)) {
+                 y_lims = NULL) {
 
   if(!is.null(x_lims)) {
     x_lower = x_lims[1]
@@ -69,6 +68,56 @@ psmp <- function(x_lower = 0,
     -cdf_smp(x = x_upper, y = y_lower, n = n, alpha = alpha, beta = beta) +
     #cdf_smp(x = x_lower, y = min(c(x_lower,y_lower)), n = n, alpha = alpha, beta = beta)
     cdf_smp(x = x_lower, y = y_lower, n = n, alpha = alpha, beta = beta)
+}
+
+psmp_marignal_x <- function(q, n, alpha, beta, lower.tail = TRUE) {
+  if(lower.tail) {
+    return(psmp(x_lower = 0,
+                x_upper = q,
+                y_lower = 0,
+                y_upper = Inf,
+                n = n,
+                alpha,
+                beta,
+                x_lims = NULL,
+                y_lims = NULL))
+  }
+  else{
+    return(psmp(x_lower = q,
+                x_upper = Inf,
+                y_lower = 0,
+                y_upper = Inf,
+                n = n,
+                alpha,
+                beta,
+                x_lims = NULL,
+                y_lims = NULL))
+  }
+}
+
+psmp_marignal_y <- function(q, n, alpha, beta, lower.tail = TRUE) {
+  if(lower.tail) {
+    return(psmp(x_lower = 0,
+                x_upper = Inf,
+                y_lower = 0,
+                y_upper = q,
+                n = n,
+                alpha,
+                beta,
+                x_lims = NULL,
+                y_lims = NULL))
+  }
+  else{
+    return(psmp(x_lower = 0,
+                x_upper = Inf,
+                y_lower = q,
+                y_upper = Inf,
+                n = n,
+                alpha,
+                beta,
+                x_lims = NULL,
+                y_lims = NULL))
+  }
 }
 
 
