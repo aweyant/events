@@ -70,7 +70,19 @@ psmp <- function(x_lower = 0,
     cdf_smp(x = x_lower, y = y_lower, n = n, alpha = alpha, beta = beta)
 }
 
-psmp_marignal_x <- function(q, n, alpha, beta, lower.tail = TRUE) {
+#' Title
+#'
+#' @param q
+#' @param n
+#' @param alpha
+#' @param beta
+#' @param lower.tail
+#'
+#' @return
+#' @export
+#'
+#' @examples
+psmp_marginal_x <- function(q, n, alpha, beta, lower.tail = TRUE) {
   if(lower.tail) {
     return(psmp(x_lower = 0,
                 x_upper = q,
@@ -95,7 +107,19 @@ psmp_marignal_x <- function(q, n, alpha, beta, lower.tail = TRUE) {
   }
 }
 
-psmp_marignal_y <- function(q, n, alpha, beta, lower.tail = TRUE) {
+#' Title
+#'
+#' @param q
+#' @param n
+#' @param alpha
+#' @param beta
+#' @param lower.tail
+#'
+#' @return
+#' @export
+#'
+#' @examples
+psmp_marginal_y <- function(q, n, alpha, beta, lower.tail = TRUE) {
   if(lower.tail) {
     return(psmp(x_lower = 0,
                 x_upper = Inf,
@@ -120,8 +144,6 @@ psmp_marignal_y <- function(q, n, alpha, beta, lower.tail = TRUE) {
   }
 }
 
-
-# Internal Functions ------------------------------------------------------
 cdf_smp <- function(x, y, n, alpha, beta) {
   if(is.infinite(x) & x >= 0 &
      is.infinite(y) & y >= 0) {
@@ -176,6 +198,8 @@ cdf_smp <- function(x, y, n, alpha, beta) {
   }
 }
 
+
+# Internal Functions ------------------------------------------------------
 fun_b <- function(x,y,n,alpha,beta,k) {
   # INSPECTED, SEEMS GOOD
   factorial(n) * sum(sapply(X = 1:(k-1),
@@ -195,8 +219,6 @@ fun_b <- function(x,y,n,alpha,beta,k) {
                                              }))
                               }))
 }
-
-
 
 fun_c <- function(x,y,n,alpha,beta,k) {
   if(k == 1) {

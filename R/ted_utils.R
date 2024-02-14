@@ -52,6 +52,56 @@ psdeddt <- function(q, # prob set duration event distribution derived total
   }
 }
 
+#' **P**robability of **T**rivariate **E**vent **D**istribution **D**erived **T**otal (P TED DT)
+#'
+#' This evaluates the CDF of the total accumulation of an amount over an event.
+#'
+#' For example, a 3 day precipitation event might have a magnitude of 430m. If
+#' the threshold for defining the event was 75mm/day, then the actual total
+#' precipitation over this event was 655mm \[430 + 3*75\].
+#'
+#' Note that durations and daily accumulations are, in general, both random
+#' variables, so if we are interested in probabilties (return intervals) of
+#' uninterrupted precipitation accumulations, we must construct an event total
+#' CDF from (at least) two components: the (discrete) PMF describing event
+#' durations and the CDF for magnitudes, conditioned upon a duration. The Law of
+#' Total Probability lets us create a CDF for the event total, which is quite
+#' meaningful if we are studying precipitation.
+#'
+#' @inheritParams determine_stopping_point
+#' @param q a number; the event total, including the below-threshold portion
+#' @param threshold a number; the minimum threshold used to define events
+#' @param event_length_arg_name a string; the name of the argument used for the
+#' duration of an event in the CDF of the magnitude conditioned duration. For
+#' example, this would be "n" for psmp_marginal_x()
+#' @param event_magnitude_conditional_cdf a function; the CDF of event magnitudes
+#' conditioned on durations, e.g. psmp_marginal_x()
+#' @param event_magnitude_conditional_cdf_args a list; other arguments, such as
+#' parameters of the distribution
+#' @param lower.tail logical; if TRUE (default), probabilities are
+#' \eqn{P[X \le x]}, otherwise, \eqn{P[X > x]}.
+#'
+#' @return a number in the interval \[0,1\], the probability of not exceeding or
+#' exceeding q
+#' @export
+#'
+#' @examples
+#' q = 100; length = 2; threshold = 20
+#' alpha = 0.02; beta = 0.04
+#' prob_p = 0.6; prob_q = 0.7
+#' event_length_arg_name = "n"
+#'
+#' pteddt(q = q,
+#' threshold = threshold,
+#' event_duration_marginal_cdf = phgeom,
+#' event_duration_marginal_cdf_args = list(prob_p = prob_p, prob_q = prob_q),
+#' event_length_arg_name = event_length_arg_name,
+#' event_magnitude_conditional_cdf = psmp_marginal_x,
+#' event_magnitude_conditional_cdf_args = list(alpha = alpha, beta = beta),
+#' lower.tail = TRUE,
+#' tol = 10^(-6),
+#' max_N = 100)
+#'
 pteddt <- function(q,
                    threshold,
                    event_duration_marginal_cdf,
