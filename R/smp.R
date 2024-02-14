@@ -1,25 +1,47 @@
-#' Sums & Maxima of Multivariate Pareto II Vectors
+#' The Distribution of Sums & Maxima of Multivariate Pareto II Vectors
 #'
-#' @param n number of observations.
+#' Density, distribution function, quantile function and random generation for
+#' the Sums \& Maxima of Pareto II Vectors of specified lengths
+#'
+#' @param n when provided to rsmp, this is the number of observations. Otherwise
+#' it represents the duration of an event.
 #' @param alpha,beta tail/shape parameter and scale parameters of a Multivariate
 #' Pareto II distribution (see details for the parameterization used).
 #' @param m the number of elements in the vectors. This is expected to either be
 #' a single number (all generated vectors have the same number of elements) or a
 #' vector of length n (in which case the number of elements in each vector is
 #' specified)
+#' @param lower.tail logical; if TRUE (default), probabilities are
+#' \eqn{P[X \le x]}, otherwise, \eqn{P[X > x]}.
+#' @param q a number; value given univariate functions of univariate marginals
+#' @param x,y numbers; magnitude and maxima of a Pareto II vector
 #' @param rounding logical; if TRUE, generated Pareto II values are rounded to
 #' the nearest whole number. This feature is present in case this is important
 #' for a comparison of actual observations to some theoretical output.
+#' @param x_lower,x_upper,y_lower,y_upper each are individual numbers; limits of
+#' integration of the SMP CDF
+#' @param x_lims,y_lims each are vectors of length 2; an alternative way to
+#' specify the limits of integration as vectors of upper and lower bounds
 #'
 #' @return
-#' a data.frame() with three columns:
-#' \itemize{
-#' \item n the number of elements in the Pareto II vector
-#' \item x the sum of the elements in the Pareto II vector
-#' \item y the maximal value in the Pareto II vector
-#' }
-#' @export
+#'  rsmp generates random values of the distribution and returns a them
+#'  data.frame() with one obervation per row and three columns:
+#'  \itemize{
+#'  \item n the number of elements in the Pareto II vector
+#'  \item x the sum of the elements in the Pareto II vector
+#'  \item y the maximal value in the Pareto II vector
+#'  }
 #'
+#'  smp integrates the CDF between user-provided limits. The result is returned
+#'  as a number in \[0,1\]
+#'
+#' @name smp
+NULL
+# smp <- function(x, q, p, n, prob_p, prob_q, log, log.p, lower.tail) {
+#   list(x, q, p, n, prob_p, prob_q, log, log.p, lower.tail)
+# }
+
+#' @rdname smp
 #' @examples
 #' rsmp(n = 3, m = c(3,4,2), alpha = 0.03, beta = 1/100)
 #' \dontrun{
@@ -28,6 +50,7 @@
 #' 2 4 357.7778 187.8859
 #' 3 2 219.1081 140.8779
 #' }
+#' @export
 rsmp <- function(n, alpha, beta, m, rounding = FALSE) {
   event_vectors <- rmvlomax(n = n,
                             m = m,
@@ -39,10 +62,14 @@ rsmp <- function(n, alpha, beta, m, rounding = FALSE) {
              y = vapply(X = event_vectors, FUN = max, FUN.VALUE = 1.05))
 }
 
-
-psmp <- function(x_lower = 0,
+#' @rdname smp
+#' @examples
+#' psmp(x_upper = 100, y_lower = 40, n = 3, alpha = 0.03, beta = 1/100)
+#'
+#' @export
+psmp <- function(x_lower = (1e-10)/beta,
                  x_upper = Inf,
-                 y_lower = 0,
+                 y_lower = (1e-10)/beta,
                  y_upper = Inf,
                  n = 1,
                  alpha,
@@ -70,80 +97,59 @@ psmp <- function(x_lower = 0,
     cdf_smp(x = x_lower, y = y_lower, n = n, alpha = alpha, beta = beta)
 }
 
-#' Title
-#'
-#' @param q
-#' @param n
-#' @param alpha
-#' @param beta
-#' @param lower.tail
-#'
-#' @return
-#' @export
-#'
+#' @rdname smp
 #' @examples
+#' psmp(x_upper = 100, n = 3, alpha = 0.03, beta = 1/100)
+#' # This should provide the same output as...
+#' psmp_marginal_x(q = 100, n = 3, alpha = 0.03, beta = 1/100)
+#'
+#' @export
 psmp_marginal_x <- function(q, n, alpha, beta, lower.tail = TRUE) {
   if(lower.tail) {
-    return(psmp(x_lower = 0,
-                x_upper = q,
-                y_lower = 0,
-                y_upper = Inf,
+    return(psmp(x_upper = q,
                 n = n,
-                alpha,
-                beta,
+                alpha = alpha,
+                beta = beta,
                 x_lims = NULL,
                 y_lims = NULL))
   }
   else{
     return(psmp(x_lower = q,
-                x_upper = Inf,
-                y_lower = 0,
-                y_upper = Inf,
                 n = n,
-                alpha,
-                beta,
+                alpha = alpha,
+                beta = beta,
                 x_lims = NULL,
                 y_lims = NULL))
   }
 }
 
-#' Title
-#'
-#' @param q
-#' @param n
-#' @param alpha
-#' @param beta
-#' @param lower.tail
-#'
-#' @return
-#' @export
-#'
+#' @rdname smp
 #' @examples
+#' psmp_marginal_y(q = 100, n = 3, alpha = 0.03, beta = 2/100)
+#' @export
 psmp_marginal_y <- function(q, n, alpha, beta, lower.tail = TRUE) {
   if(lower.tail) {
-    return(psmp(x_lower = 0,
-                x_upper = Inf,
-                y_lower = 0,
-                y_upper = q,
+    return(psmp(y_upper = q,
                 n = n,
-                alpha,
-                beta,
+                alpha = alpha,
+                beta = beta,
                 x_lims = NULL,
                 y_lims = NULL))
   }
   else{
-    return(psmp(x_lower = 0,
-                x_upper = Inf,
-                y_lower = q,
-                y_upper = Inf,
+    return(psmp(y_lower = q,
                 n = n,
-                alpha,
-                beta,
+                alpha = alpha,
+                beta = beta,
                 x_lims = NULL,
                 y_lims = NULL))
   }
 }
 
+#' @rdname smp
+#' @examples
+#' cdf_smp(x = 200, y = 100, n = 3, alpha = 0.03, beta = 2/100)
+#' @export
 cdf_smp <- function(x, y, n, alpha, beta) {
   if(is.infinite(x) & x >= 0 &
      is.infinite(y) & y >= 0) {

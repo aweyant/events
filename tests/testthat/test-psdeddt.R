@@ -9,10 +9,12 @@ test_that("psdeddt gives expected output given known parameters", {
                                          n = length,
                                          alpha = alpha, beta = beta)
 
-  expect_equal(psdeddt(q = q, length = length, threshold = threshold,
-                       event_magnitude_conditional_cdf = psmp_marginal_x,
-                       event_magnitude_conditional_cdf_args = list(alpha = alpha, beta = beta),
-                       event_length_arg_name = event_length_arg_name),
+  function_calc_result <- psdeddt(q = q, length = length, threshold = threshold,
+                                  event_magnitude_conditional_cdf = psmp_marginal_x,
+                                  event_magnitude_conditional_cdf_args = list(alpha = alpha, beta = beta),
+                                  event_length_arg_name = event_length_arg_name)
+
+  expect_equal(function_calc_result,
                manual_calc_result)
 })
 

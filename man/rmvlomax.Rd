@@ -7,7 +7,8 @@
 rmvlomax(n, m, alpha, beta, rounding = FALSE)
 }
 \arguments{
-\item{n}{number of observations.}
+\item{n}{when provided to rsmp, this is the number of observations. Otherwise
+it represents the duration of an event.}
 
 \item{m}{the number of elements in the vectors. This is expected to either be
 a single number (all generated vectors have the same number of elements) or a

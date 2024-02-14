@@ -5,16 +5,16 @@
 \title{Find a quantile of a discrete distribution to achieve a low exceedance probability}
 \usage{
 determine_stopping_point(
-  event_duration_marginal_cdf,
-  event_duration_marginal_cdf_args,
+  event_duration_marginal_pmf,
+  event_duration_marginal_pmf_args,
   tol = 10^(-6),
   max_N = 160
 )
 }
 \arguments{
-\item{event_duration_marginal_cdf}{a function; the marginal CDF for event durations}
+\item{event_duration_marginal_pmf}{a function; the marginal CDF for event durations}
 
-\item{event_duration_marginal_cdf_args}{a list; arguments for the marginal duration CDF}
+\item{event_duration_marginal_pmf_args}{a list; arguments for the marginal duration CDF}
 
 \item{tol}{a very small number; minimal exceedance probability desired}
 
