@@ -51,3 +51,25 @@ test_that("psdeddt fails when the user overwrites an existing argument with thei
                        event_magnitude_conditional_cdf_args = list(alpha = alpha, beta = beta),
                        event_length_arg_name = event_length_arg_name))
 })
+
+test_that("psdeddt returns an event total CDF which evaluates correctly", {
+  q = 100; length = 2; threshold = 20
+  alpha = 0.02; beta = 0.04
+  event_length_arg_name = "n"
+
+  promise <- psdeddt(q = NULL, length = length, threshold = threshold,
+                     event_magnitude_conditional_cdf = psmp_marginal_x,
+                     event_length_arg_name = event_length_arg_name)
+
+  promise_eval_result <- promise(q = q, length = length, threshold = threshold,
+                                 event_magnitude_conditional_cdf_args = list(alpha = alpha,
+                                                                             beta = beta))
+
+
+  direct_eval_result <- psdeddt(q = q, length = length, threshold = threshold,
+                                event_magnitude_conditional_cdf = psmp_marginal_x,
+                                event_magnitude_conditional_cdf_args = list(alpha = alpha, beta = beta),
+                                event_length_arg_name = event_length_arg_name)
+
+  expect_equal(promise_eval_result, direct_eval_result)
+})

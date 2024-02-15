@@ -60,38 +60,80 @@ NULL
 #' tol = 10^(-6),
 #' max_N = 100)
 #' @export
-pteddt <- function(q,
+pteddt <- function(q = NULL,
                    threshold,
                    event_duration_marginal_pmf,
-                   event_duration_marginal_pmf_args,
+                   event_duration_marginal_pmf_args = NULL,
                    event_length_arg_name = "n",
                    event_magnitude_conditional_cdf,
                    event_magnitude_conditional_cdf_args,
                    lower.tail = TRUE,
                    tol = 10^(-6),
                    max_N = 100) {
-  threshold <- unname(threshold)
-  N <- determine_stopping_point(event_duration_marginal_pmf,
+  evaluate_cdf <- FALSE
+  if(!is.null(q)) {evaluate_cdf <- TRUE}
+
+  if(!is.null(event_duration_marginal_pmf_args) && !is.null(q) && !is.null(event_magnitude_conditional_cdf)) {
+    max_N <- determine_stopping_point(event_duration_marginal_pmf,
+                                      event_duration_marginal_pmf_args,
+                                      tol = tol,
+                                      max_N = max_N)
+  }
+
+  derived_total_cdf <- function(q,
+                                threshold,
                                 event_duration_marginal_pmf_args,
-                                tol = tol,
-                                max_N = max_N)
-  nep <- sum(vapply(X = seq(1,N,1),
-                    FUN = function(n) {
-                      event_duration_marginal_pmf_args$x <- n
-                      psdeddt(q = q,
-                              length = n,
-                              threshold = threshold,
-                              event_magnitude_conditional_cdf = event_magnitude_conditional_cdf,
-                              event_magnitude_conditional_cdf_args = event_magnitude_conditional_cdf_args,
-                              event_length_arg_name = event_length_arg_name,
-                              lower.tail = TRUE,
-                              return_NA_outside_support = FALSE) *
-                        do.call(what = event_duration_marginal_pmf,
-                                args = event_duration_marginal_pmf_args)
-                    },
-                    FUN.VALUE = numeric(1)))
-  if(lower.tail) {return(nep)}
-  else {return(1-nep)}
+                                event_magnitude_conditional_cdf_args,
+                                lower.tail = TRUE) {
+    threshold <- unname(threshold)
+
+    set_duration_cdfs_l <- lapply(X = seq(1,max_N,1),
+                                  FUN = function(n) {
+                                    event_duration_marginal_pmf_args$x <- n
+                                    psdeddt(q = q,
+                                            length = n,
+                                            threshold = threshold,
+                                            event_magnitude_conditional_cdf = event_magnitude_conditional_cdf,
+                                            event_magnitude_conditional_cdf_args = event_magnitude_conditional_cdf_args,
+                                            event_length_arg_name = event_length_arg_name,
+                                            lower.tail = lower.tail,
+                                            return_NA_outside_support = FALSE)
+                                  })
+
+    nep <- sum(vapply(X = seq(1,max_N,1),
+                      FUN = function(n) {
+                        event_duration_marginal_pmf_args$x <- n
+                        set_duration_cdfs_l[[n]] * do.call(what = event_duration_marginal_pmf,
+                                                           args = event_duration_marginal_pmf_args)
+                      },
+                      FUN.VALUE = numeric(1)))
+
+    # nep <- sum(vapply(X = seq(1,N,1),
+    #                   FUN = function(n) {
+    #                     event_duration_marginal_pmf_args$x <- n
+    #                     psdeddt(q = q,
+    #                             length = n,
+    #                             threshold = threshold,
+    #                             event_magnitude_conditional_cdf = event_magnitude_conditional_cdf,
+    #                             event_magnitude_conditional_cdf_args = event_magnitude_conditional_cdf_args,
+    #                             event_length_arg_name = event_length_arg_name,
+    #                             lower.tail = TRUE,
+    #                             return_NA_outside_support = FALSE) *
+    #                       do.call(what = event_duration_marginal_pmf,
+    #                               args = event_duration_marginal_pmf_args)
+    #                   },
+    #                   FUN.VALUE = numeric(1)))
+    if(lower.tail) {return(nep)}
+    else {return(1-nep)}
+  }
+  if(evaluate_cdf) {
+    return(derived_total_cdf(q = q,
+                             threshold = threshold,
+                             event_duration_marginal_pmf_args = event_duration_marginal_pmf_args,
+                             event_magnitude_conditional_cdf_args = event_magnitude_conditional_cdf_args,
+                             lower.tail = lower.tail))
+  }
+  return(derived_total_cdf)
 }
 
 #' @rdname ted
@@ -104,7 +146,7 @@ pteddt <- function(q,
 #' 3 2 219.1081 140.8779
 #' }
 #' @export
-psdeddt <- function(q,
+psdeddt <- function(q = NULL,
                     length = 1,
                     threshold,
                     event_magnitude_conditional_cdf,
@@ -112,47 +154,69 @@ psdeddt <- function(q,
                     event_length_arg_name = "n",
                     lower.tail = TRUE,
                     return_NA_outside_support = FALSE) {
-  threshold <- unname(threshold)
-  if(!is.null(eval(str2expression(paste0("event_magnitude_conditional_cdf_args$", event_length_arg_name))))) {
-    message("Your provided argment name for length conflicts with another
+  evaluate_cdf <- FALSE
+  if(!is.null(q)) {evaluate_cdf <- TRUE}
+
+  # Given an actual event total, duration, and threshold, calculate corresponding event magnitude
+  derived_total_cdf <- function(q = NULL,
+                                length = 1,
+                                threshold,
+                                event_magnitude_conditional_cdf_args,
+                                lower.tail = TRUE,
+                                return_NA_outside_support = FALSE) {
+    threshold <- unname(threshold)
+
+    if(!is.null(eval(str2expression(paste0("event_magnitude_conditional_cdf_args$", event_length_arg_name))))) {
+      message("Your provided argment name for length conflicts with another
     argument of the event magnitude marginal CDF. The argument for the numerical
     argument for event length should be provided directly to psdeddt, as should
     its name as it is given to the event magnitude marginal CDF/. If this error
     is not due to a mistake on your part, you might need to write a wrapper
     function for your magitude marginal CDF.")
-    stop()
-  }
-  eval(str2expression(paste0("event_magnitude_conditional_cdf_args$", event_length_arg_name,"<-",length)))
+      stop()
+    }
 
-  # make sure that given lower.tail arguments are non-contradictory
-  if(!is.null(event_magnitude_conditional_cdf_args$lower.tail)){
-    message(paste0("lower.tail argument is provided for ",
-                   as.character(substitute(test_fun)),
-                   ". This argument will be ignored.\n If you want to use lower.tail, pass it to psdeddt() directly"))
-    event_magnitude_conditional_cdf_args <- event_magnitude_conditional_cdf_args[event_magnitude_conditional_cdf_args != "lower.tail"]
-  }
+    eval(str2expression(paste0("event_magnitude_conditional_cdf_args$", event_length_arg_name,"<-",length)))
 
-  outside_support <- FALSE
-  # Given an actual event total, duration, and threshold, calculate corresponding event magnitude
-  event_derived_magnitude <- q - (length * threshold)
+    # make sure that given lower.tail arguments are non-contradictory
+    if(!is.null(event_magnitude_conditional_cdf_args$lower.tail)){
+      message(paste0("lower.tail argument is provided for ",
+                     as.character(substitute(test_fun)),
+                     ". This argument will be ignored.\n If you want to use lower.tail, pass it to psdeddt() directly"))
+      event_magnitude_conditional_cdf_args <- event_magnitude_conditional_cdf_args[event_magnitude_conditional_cdf_args != "lower.tail"]
+    }
 
-  if(event_derived_magnitude <= 0) { # check if event total is possible
-    outside_support <- TRUE
-  }
+    event_derived_magnitude <- q - (length * threshold)
+    outside_support <- FALSE
+    if(event_derived_magnitude <= 0) { # check if event total is possible
+      outside_support <- TRUE
+    }
 
-  nep <- do.call(what = event_magnitude_conditional_cdf,
-                 args = c(q = event_derived_magnitude,
-                          lower.tail = TRUE,
-                          event_magnitude_conditional_cdf_args))
-  if(outside_support) {
-    if(return_NA_outside_support) {return(NaN)}
-    else {return(0)}
+    nep <- do.call(what = event_magnitude_conditional_cdf,
+                   args = c(q = event_derived_magnitude,
+                            lower.tail = TRUE,
+                            event_magnitude_conditional_cdf_args))
+    if(outside_support) {
+      if(return_NA_outside_support) {return(NaN)}
+      else {return(0)}
+    }
+    else if(lower.tail) {
+      return(nep)
+    }
+    else{
+      return(1 - nep)
+    }
   }
-  else if(lower.tail) {
-    return(nep)
+  if(evaluate_cdf) {
+    return(derived_total_cdf(q = q,
+                             length = length,
+                             threshold = threshold,
+                             event_magnitude_conditional_cdf_args = event_magnitude_conditional_cdf_args,
+                             lower.tail = lower.tail,
+                             return_NA_outside_support = return_NA_outside_support))
   }
-  else{
-    return(1 - nep)
+  else {
+    return(derived_total_cdf)
   }
 }
 

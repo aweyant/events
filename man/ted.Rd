@@ -9,10 +9,10 @@
 \strong{D}istribution \strong{D}erived \strong{T}otal}
 \usage{
 pteddt(
-  q,
+  q = NULL,
   threshold,
   event_duration_marginal_pmf,
-  event_duration_marginal_pmf_args,
+  event_duration_marginal_pmf_args = NULL,
   event_length_arg_name = "n",
   event_magnitude_conditional_cdf,
   event_magnitude_conditional_cdf_args,
@@ -22,7 +22,7 @@ pteddt(
 )
 
 psdeddt(
-  q,
+  q = NULL,
   length = 1,
   threshold,
   event_magnitude_conditional_cdf,

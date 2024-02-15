@@ -1,6 +1,11 @@
 #' Maximum Likelihood Estimator Calculation for the Hurdle-Geometric Sums &
 #' Maxima of Pareto Vectors distribution
 #'
+#' This function is labeled "janky" not because it has not passed tests for all
+#' realistic use cases so far, but because the author is not yet sure how output
+#' of such a function ought to be formatted. This function can be safely used in
+#' scripts, but it will either be superseded or "wrapped" later on.
+#'
 #' @param magnitudes sums of Pareto II vectors
 #' @param durations number of elements in Pareto II vectors
 #'
