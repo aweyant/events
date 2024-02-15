@@ -4,7 +4,8 @@
 #'
 #' This evaluates the CDF of the total accumulation of an amount over an event.
 #'
-#' For example, a 3 day precipitation event might have a magnitude of 430m. If
+#' pteddt() by way of example:
+#' a 3 day precipitation event might have a magnitude of 430m. If
 #' the threshold for defining the event was 75mm/day, then the actual total
 #' precipitation over this event was 655mm \[430 + 3*75\].
 #'
@@ -15,6 +16,9 @@
 #' durations and the CDF for magnitudes, conditioned upon a duration. The Law of
 #' Total Probability lets us create a CDF for the event total, which is quite
 #' meaningful if we are studying precipitation.
+#'
+#' psdeddt() evaluates the CDF for event totals of a given duration (hence, "set
+#' duration").
 #'
 #' @inheritParams determine_stopping_point
 #' @param q a number; the event total, including the below-threshold portion
@@ -66,6 +70,7 @@ pteddt <- function(q,
                    lower.tail = TRUE,
                    tol = 10^(-6),
                    max_N = 100) {
+  threshold <- unname(threshold)
   N <- determine_stopping_point(event_duration_marginal_pmf,
                                 event_duration_marginal_pmf_args,
                                 tol = tol,
@@ -107,6 +112,7 @@ psdeddt <- function(q,
                     event_length_arg_name = "n",
                     lower.tail = TRUE,
                     return_NA_outside_support = FALSE) {
+  threshold <- unname(threshold)
   if(!is.null(eval(str2expression(paste0("event_magnitude_conditional_cdf_args$", event_length_arg_name))))) {
     message("Your provided argment name for length conflicts with another
     argument of the event magnitude marginal CDF. The argument for the numerical

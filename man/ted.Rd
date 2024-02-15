@@ -71,7 +71,8 @@ exceeding q
 This evaluates the CDF of the total accumulation of an amount over an event.
 }
 \details{
-For example, a 3 day precipitation event might have a magnitude of 430m. If
+pteddt() by way of example:
+a 3 day precipitation event might have a magnitude of 430m. If
 the threshold for defining the event was 75mm/day, then the actual total
 precipitation over this event was 655mm [430 + 3*75].
 
@@ -82,6 +83,9 @@ CDF from (at least) two components: the (discrete) PMF describing event
 durations and the CDF for magnitudes, conditioned upon a duration. The Law of
 Total Probability lets us create a CDF for the event total, which is quite
 meaningful if we are studying precipitation.
+
+psdeddt() evaluates the CDF for event totals of a given duration (hence, "set
+duration").
 }
 \examples{
 q = 100; length = 2; threshold = 20

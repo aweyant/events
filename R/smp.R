@@ -105,6 +105,9 @@ psmp <- function(x_lower = (1e-10)/beta,
 #'
 #' @export
 psmp_marginal_x <- function(q, n, alpha, beta, lower.tail = TRUE) {
+  if(alpha == 0) {
+    return(pbgge_marginal_x(q = q, n = n, beta = beta, lower.tail = lower.tail))
+  }
   if(lower.tail) {
     return(psmp(x_upper = q,
                 n = n,
