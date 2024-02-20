@@ -108,22 +108,39 @@ psmp_marginal_x <- function(q, n, alpha, beta, lower.tail = TRUE) {
   if(alpha == 0) {
     return(pbgge_marginal_x(q = q, n = n, beta = beta, lower.tail = lower.tail))
   }
-  if(lower.tail) {
-    return(psmp(x_upper = q,
-                n = n,
-                alpha = alpha,
-                beta = beta,
-                x_lims = NULL,
-                y_lims = NULL))
-  }
   else{
-    return(psmp(x_lower = q,
-                n = n,
-                alpha = alpha,
-                beta = beta,
-                x_lims = NULL,
-                y_lims = NULL))
+    if(n == 1) {
+      nep <- cdf_smp(x = q, y = q, n = 1, alpha = alpha, beta = beta)
+    }
+    else {
+      index = seq.int(0,n-1,1)
+      nep <- 1 - sum(
+        exp(index*log(alpha*beta*q) -
+              lfactorial(index) +
+              lgamma(index + 1/alpha) -
+              lgamma(1/alpha) +
+              (((-1/alpha) - index)*log(1 + alpha*beta*q))
+        )
+      )
+    }
+    ifelse(lower.tail, return(nep), return(1-nep))
   }
+  # if(lower.tail) {
+  #   return(psmp(x_upper = q,
+  #               n = n,
+  #               alpha = alpha,
+  #               beta = beta,
+  #               x_lims = NULL,
+  #               y_lims = NULL))
+  # }
+  # else{
+  #   return(psmp(x_lower = q,
+  #               n = n,
+  #               alpha = alpha,
+  #               beta = beta,
+  #               x_lims = NULL,
+  #               y_lims = NULL))
+  # }
 }
 
 #' @rdname smp
