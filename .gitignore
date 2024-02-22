@@ -3,3 +3,4 @@
 .Rdata
 .httr-oauth
 .DS_Store
+*visual_test.R

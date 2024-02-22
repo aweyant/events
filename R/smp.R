@@ -279,6 +279,7 @@ cdf_smp_slow_but_working <- function(x, y, n, alpha, beta) {
 
 # Internal Functions ------------------------------------------------------
 fun_b <- function(x,y,n,alpha,beta,k) {
+  if(k == 1) {return(0)}
   index1 <- seq.int(1,k-1,1)
   index2 <- seq.int(1,k-1,1)
   factorial(n) * sum((((-1)^(index1+1))/(factorial(index1)*factorial(n-index1))) *
@@ -301,7 +302,8 @@ fun_c <- function(x,y,n,alpha,beta,k) {
     return((1 - sum((((alpha*beta*x)^index1)/factorial(index1))*
                       (gamma(index1 + 1/alpha)/gamma(1/alpha)) *
                       ((1 + alpha * beta * x)^(-1/alpha - index1)))) *
-             (factorial(n) * sum(((-1)^(index2))*((1-index2/n)^(n-1))/(factorial(index2)*factorial(n-index2))))
+             (factorial(n) * sum(((-1)^(index2))*((1-index2/n)^(n-1))/(factorial(index2)*factorial(n-index2))) +
+                0)
     )
   }
   index3 <- seq.int(0,n-1,1)

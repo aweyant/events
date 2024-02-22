@@ -52,7 +52,7 @@ cdf_bgge <- function(x, y, n, beta) {
   if(n == 1) {
     if(x <= 0) {return(0)}
     if(is.infinite(x)) {return(1)}
-    return(pexp(q = x, rate = beta))
+    return(stats::pexp(q = x, rate = beta))
   }
   if(x < 0 | y < 0) {
     # WRITTEN AND TESTED
@@ -93,12 +93,12 @@ fun_A <- function(x,y,n,beta,k) {
   index_s <- seq.int(1,k-1,1)
   index_m <- seq.int(0,n-2,1)
 
-  factorial(n) * sum( (((-1)^(s+1))/(factorial(s)*factorial(n-s))) * ((1-s/k)^(n-1) - exp(-index_s*beta*y)) ) +
+  factorial(n) * sum( (((-1)^(index_s+1))/(factorial(index_s)*factorial(n-index_s))) * ((1-index_s/k)^(n-1) - exp(-index_s*beta*y)) ) +
     factorial(n) * exp(-k*beta*y) * sum(vapply(X = index_s,
                                                FUN = function(s) {
                                                  (((-1)^(s + 1))/(factorial(s) * factorial(n - s))) *
                                                    sum(
-                                                     (((y*beta*k)^index_m)/factorial(m)) * ( ((1-s/k)^index_m) - ((1-s/k)^(n-1)) )
+                                                     (((y*beta*k)^index_m)/factorial(index_m)) * ( ((1-s/k)^index_m) - ((1-s/k)^(n-1)) )
                                                      )
                                                },
                                                FUN.VALUE = numeric(1)))
@@ -119,7 +119,7 @@ fun_E <- function(x,y,n,beta,k) {
   (1 - exp(-beta*x)*sum(
     ((beta*x)^index_m)/factorial(index_m))) *
     (factorial(n) * sum((((-1)^(index_s1 + 1)) * (1 - index_s1/n)^(n-1))/(factorial(index_s1)*factorial(n-index_s1))) +
-       -factorial(n) * sum((((-1)^(index_s2+1)) * ((1 - s/k)^(n-1)))/(factorial(index_s2)*factorial(n-index_s2)))
+       -factorial(n) * sum((((-1)^(index_s2+1)) * ((1 - index_s2/k)^(n-1)))/(factorial(index_s2)*factorial(n-index_s2)))
      )
 }
 fun_D <- function(x,y,n,beta,k) {
