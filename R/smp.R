@@ -215,9 +215,11 @@ cdf_smp <- function(x, y, n, alpha, beta) {
       index <- seq.int(0,n,1)
       return(sum(((-1)^index) * exp(lchoose(n,index) + (-1/alpha)*log(1 + index*alpha*beta*y))))
     }
-    return((fun_b(x,y,n,alpha,beta,k) +
-              fun_c(x,y,n,alpha,beta,k)) -
-             fun_d(x,y,n,alpha,beta,k))
+    return(
+      fun_b(x,y,n,alpha,beta,k) +
+        fun_c(x,y,n,alpha,beta,k) +
+        -fun_d(x,y,n,alpha,beta,k)
+    )
   }
 }
 cdf_smp_slow_but_working <- function(x, y, n, alpha, beta) {
@@ -280,6 +282,124 @@ cdf_smp_slow_but_working <- function(x, y, n, alpha, beta) {
 # Internal Functions ------------------------------------------------------
 fun_b <- function(x,y,n,alpha,beta,k) {
   if(k == 1) {return(0)}
+  if(k == 2) {
+    index_s <- seq.int(1,k-1,1)
+    index_m <- seq.int(0,n-2,1)
+    factorial(n)*sum(
+      (((-1)^(index_s+1)) / (factorial(index_s)*factorial(n-index_s))) * (
+        ((1-index_s/k)^(n-1)) - (1+alpha*beta*index_s*y)^(-1/alpha)
+      )
+    ) +
+      factorial(n) * sum(
+        (((-1)^(index_s+1))/(factorial(index_s)*factorial(n-index_s))) *
+          sum(vapply(X = index_m,
+                     FUN = function(m) {
+                       exp(
+                         m*log(alpha*beta*y*k) - lfactorial(m) + lgamma(m + 1/alpha) - lgamma(1/alpha) +
+                           log(((1-index_s/k)^m) - ((1-index_s/k)^(n-1))) +
+                           ((-1/alpha)-m)*log(1 + alpha * beta * k *y)
+                         )
+                       },
+                     FUN.VALUE = numeric(length(index_s)))
+              )
+      )
+  }
+  else {
+    index_s <- seq.int(1,k-1,1)
+    index_m <- seq.int(0,n-2,1)
+    factorial(n)*sum(
+      (((-1)^(index_s+1)) / (factorial(index_s)*factorial(n-index_s))) * (
+        ((1-index_s/k)^(n-1)) - (1+alpha*beta*index_s*y)^(-1/alpha)
+      )
+    ) +
+      factorial(n) * sum(
+        (((-1)^(index_s+1))/(factorial(index_s)*factorial(n-index_s))) *
+          apply(X = vapply(X = index_m,
+                           FUN = function(m) {
+                             exp(
+                               m*log(alpha*beta*y*k) - lfactorial(m) + lgamma(m + 1/alpha) - lgamma(1/alpha) +
+                                 log(((1-index_s/k)^m) - ((1-index_s/k)^(n-1))) +
+                                 ((-1/alpha)-m)*log(1 + alpha * beta * k *y)
+                             )
+                           },
+                           FUN.VALUE = numeric(length(index_s))),
+                FUN = sum,
+                MARGIN = 1)
+      )
+  }
+}
+
+fun_c <- function(x,y,n,alpha,beta,k) {
+  index_i <- seq.int(0,n-1,1)
+  index_s1 <- seq.int(1,n-1,1)
+  if(k == 1) {
+    (1 - sum(exp(
+      index_i * log(alpha * beta * x) +
+        -lfactorial(index_i) +
+        lgamma(index_i + 1/alpha) +
+        -lgamma(1/alpha) +
+        ((-1/alpha) - index_i)*log(1 + alpha*beta*x)
+    ))) * (
+      factorial(n) * sum(
+        (((-1)^(index_s1+1)) * ((1-index_s1/n)^(n-1)))/(factorial(index_s1)*factorial(n-index_s1))
+      ) + 0
+    )
+  }
+  else {
+    index_s2 <- seq.int(1,k-1,1)
+    return((1 - sum(exp(
+      index_i * log(alpha * beta * x) +
+        -lfactorial(index_i) +
+        lgamma(index_i + 1/alpha) +
+        -lgamma(1/alpha) +
+        ((-1/alpha) - index_i)*log(1 + alpha * beta*x)
+      ))) * (
+      factorial(n) * sum(
+        (((-1)^(index_s1+1)) * ((1-index_s1/n)^(n-1)))/(factorial(index_s1)*factorial(n-index_s1))
+      ) +
+        -factorial(n) * sum(
+          (((-1)^(index_s2 + 1)) * ((1-index_s2/k)^(n-1)))/(factorial(index_s2)*factorial(n-index_s2))
+        )
+      )
+    )
+  }
+}
+
+fun_d <- function(x,y,n,alpha,beta,k) {
+  index_s <- seq.int(1,k,1)
+  index_m <- seq.int(0,n-1,1)
+  return(
+    factorial(n) * sum(
+      vapply(X = index_s,
+             FUN = function(s) {
+               (((-1)^(s+1))/(factorial(s)*factorial(n-s))) *
+                 sum(
+                   (exp(index_m*log(alpha*beta) - lfactorial(index_m) + lgamma(1/alpha+index_m) - lgamma(1/alpha))) *
+                     (
+                       (
+                         (y^index_m) * (
+                           ((k-s)^index_m) - (((1-s/k)^(n-1)) * (k^index_m))
+                           ) * (
+                             (1 + alpha*beta*k*y)^((-1/alpha) - index_m)
+                             )
+                         ) +
+                         (
+                           (((x^index_m)*((1-s/k)^(n-1))) - ((x - s*y)^index_m)) * (
+                             (1 + alpha*beta*x)^((-1/alpha)-index_m)
+                             )
+                           )
+                     )
+                 )
+             },
+             FUN.VALUE = numeric(1))
+    )
+  )
+}
+
+
+# Depricated Internal Functions -------------------------------------------
+fun_b_faster_possibly_buggy <- function(x,y,n,alpha,beta,k) {
+  if(k == 1) {return(0)}
   index1 <- seq.int(1,k-1,1)
   index2 <- seq.int(1,k-1,1)
   factorial(n) * sum((((-1)^(index1+1))/(factorial(index1)*factorial(n-index1))) *
@@ -291,11 +411,11 @@ fun_b <- function(x,y,n,alpha,beta,k) {
                                         (gamma(m + 1/alpha)/gamma(1/alpha)) *
                                         (((1 - index2/k)^m) - (1 - index2/k)^(n-1)) *
                                         ((1 + alpha * beta * k * y)^(-1/alpha - m))
-                                      },
+                                    },
                                     FUN.VALUE = numeric(length(index2)))))
 }
 
-fun_c <- function(x,y,n,alpha,beta,k) {
+fun_c_faster_possibly_buggy <- function(x,y,n,alpha,beta,k) {
   if(k == 1) {
     index1 <- seq.int(0,n-1,1)
     index2 <- seq.int(1,n-1,1)
@@ -316,7 +436,7 @@ fun_c <- function(x,y,n,alpha,beta,k) {
        factorial(n) * sum(((-1)^(index5+1))*((1-index5/k)^(n-1))/(factorial(index5)*factorial(n-index5))))
 }
 
-fun_d <- function(x,y,n,alpha,beta,k) {
+fun_d_faster_possibly_buggy <- function(x,y,n,alpha,beta,k) {
   index1 <- seq.int(1,n-1,1)
   factorial(n) * sum(sapply(X = (1:k),
                             FUN = function(s){
@@ -331,8 +451,6 @@ fun_d <- function(x,y,n,alpha,beta,k) {
                             }))
 }
 
-
-# Depricated Internal Functions -------------------------------------------
 fun_b_slow <- function(x,y,n,alpha,beta,k) {
   # INSPECTED, SEEMS GOOD
   factorial(n) * sum(sapply(X = 1:(k-1),

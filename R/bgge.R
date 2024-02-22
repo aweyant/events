@@ -56,30 +56,30 @@ cdf_bgge <- function(x, y, n, beta) {
   }
   if(x < 0 | y < 0) {
     # WRITTEN AND TESTED
-    print("case 1")
+    # print("case 1")
     return(0)
   }
   else if(0 <= x & x <= y) {
     # WRITTEN, UNTESTED
-    print("case 2")
+    # print("case 2")
     index <- seq.int(0,n-1,1)
     return(1 - sum(exp(index * log(beta*x) - beta*x - lfactorial(index))))
   }
   else if(0 <= n*y & n*y <= x) {
     # WRITTEN, UNTESTED
-    print("case 4")
+    # print("case 4")
     return((1-exp(-beta*y))^n)
   }
   else{
     # WRITTEN, UNTESTED
-    print("case 3")
+    # print("case 3")
     k <- numeric()
     for(i in seq.int(from = 1, to = n-1, by = 1)) {
       if(0 <= x/(i+1) & x/(i+1) <= y & y <= x/i) {
         k <- i
       }
     }
-    print(k)
+    # print(k)
     return((fun_A(x,y,n,beta,k) +
               fun_E(x,y,n,beta,k)) +
              -fun_D(x,y,n,beta,k))

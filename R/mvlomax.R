@@ -29,7 +29,7 @@ rmvlomax <- function(n,
     m <- 1
   }
   else if(length(m) == 1) {
-    warning("A single length m was provided - assuming each observation is meant
+    message("A single length m was provided - assuming each observation is meant
     to be this length.")
   }
   else if(n != length(m) & length(m) != 1) {
