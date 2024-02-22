@@ -220,6 +220,53 @@ psdeddt <- function(q = NULL,
   }
 }
 
+
+cdf_ted <- function(x, y, n,
+                    event_duration_marginal_pmf,
+                    event_duration_marginal_pmf_args = NULL,
+                    # event_length_arg_name = "n",
+                    event_bivariate_conditional_cdf,
+                    event_bivariate_conditional_cdf_args = NULL,
+                    tol = 10^(-6),
+                    max_N = 100) {
+  evaluate_cdf <- FALSE
+  if(!is.null(x) && !is.null(y) && !is.null(n)) {evaluate_cdf <- TRUE}
+
+  if(!is.null(event_duration_marginal_pmf_args) && !is.null(event_bivariate_conditional_cdf)) {
+    max_N <- determine_stopping_point(event_duration_marginal_pmf,
+                                      event_duration_marginal_pmf_args,
+                                      tol = tol,
+                                      max_N = max_N)
+  }
+
+  trivariate_cdf <- function(x = NULL, y = NULL, n = NULL,
+                             event_duration_marginal_pmf_args,
+                             event_bivariate_conditional_cdf_args) {
+
+    nep <- sum(vapply(X = seq(1, max_N, 1),
+                      FUN = function(k) {
+                        event_bivariate_conditional_cdf_args$x <- x
+                        event_bivariate_conditional_cdf_args$y <- y
+                        event_bivariate_conditional_cdf_args$n <- k
+
+                        event_duration_marginal_pmf_args$x <- n
+
+                        do.call(what = event_bivariate_conditional_cdf,
+                                args = event_bivariate_conditional_cdf_args) *
+                          do.call(what = event_duration_marginal_pmf,
+                                  args = event_duration_marginal_pmf_args)
+                      },
+                      FUN.VALUE = numeric(1)))
+    return(nep)
+  }
+  if(evaluate_cdf) {
+    return(trivariate_cdf(x = x, y = y, n = n,
+                          event_duration_marginal_pmf_args = event_duration_marginal_pmf_args,
+                          event_bivariate_conditional_cdf_args = event_bivariate_conditional_cdf_args))
+  }
+  return(trivariate_cdf)
+}
+
 #' Find a quantile of a discrete distribution to achieve a low exceedance probability
 #'
 #' This is a utility function used when calculating marginal distributions of

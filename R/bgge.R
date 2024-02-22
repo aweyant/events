@@ -43,3 +43,98 @@ rbgge <- function(n, m, beta, rounding = FALSE){
 pbgge_marginal_x <- function(q, n, beta, lower.tail = TRUE) {
   stats::pgamma(q = q, shape = n, rate = beta, lower.tail = lower.tail)
 }
+
+cdf_bgge <- function(x, y, n, beta) {
+  if(is.infinite(x) & x >= 0 &
+     is.infinite(y) & y >= 0) {
+    return(1)
+  }
+  if(n == 1) {
+    if(x <= 0) {return(0)}
+    if(is.infinite(x)) {return(1)}
+    return(pexp(q = x, rate = beta))
+  }
+  if(x < 0 | y < 0) {
+    # WRITTEN AND TESTED
+    print("case 1")
+    return(0)
+  }
+  else if(0 <= x & x <= y) {
+    # WRITTEN, UNTESTED
+    print("case 2")
+    index <- seq.int(0,n-1,1)
+    return(1 - sum(exp(index * log(beta*x) - beta*x - lfactorial(index))))
+  }
+  else if(0 <= n*y & n*y <= x) {
+    # WRITTEN, UNTESTED
+    print("case 4")
+    return((1-exp(-beta*y))^n)
+  }
+  else{
+    # WRITTEN, UNTESTED
+    print("case 3")
+    k <- numeric()
+    for(i in seq.int(from = 1, to = n-1, by = 1)) {
+      if(0 <= x/(i+1) & x/(i+1) <= y & y <= x/i) {
+        k <- i
+      }
+    }
+    print(k)
+    return((fun_A(x,y,n,beta,k) +
+              fun_E(x,y,n,beta,k)) +
+             -fun_D(x,y,n,beta,k))
+  }
+}
+
+
+# Helper functions --------------------------------------------------------
+fun_A <- function(x,y,n,beta,k) {
+  if(k == 1) {return(0)}
+  index_s <- seq.int(1,k-1,1)
+  index_m <- seq.int(0,n-2,1)
+
+  factorial(n) * sum( (((-1)^(s+1))/(factorial(s)*factorial(n-s))) * ((1-s/k)^(n-1) - exp(-index_s*beta*y)) ) +
+    factorial(n) * exp(-k*beta*y) * sum(vapply(X = index_s,
+                                               FUN = function(s) {
+                                                 (((-1)^(s + 1))/(factorial(s) * factorial(n - s))) *
+                                                   sum(
+                                                     (((y*beta*k)^index_m)/factorial(m)) * ( ((1-s/k)^index_m) - ((1-s/k)^(n-1)) )
+                                                     )
+                                               },
+                                               FUN.VALUE = numeric(1)))
+}
+fun_E <- function(x,y,n,beta,k) {
+  index_m = seq.int(0,n-1,1)
+  index_s1 = seq.int(1,n-1,1)
+  if(k == 1) {
+    return((1 - exp(-beta*x)*sum(
+      ((beta*x)^index_m)/factorial(index_m))) *
+        (factorial(n) * sum((((-1)^(index_s1 + 1)) * (1 - index_s1/n)^(n-1))/(factorial(index_s1)*factorial(n-index_s1))) +
+           -0
+         )
+      )
+  }
+  index_s2 = seq.int(1,k-1,1)
+
+  (1 - exp(-beta*x)*sum(
+    ((beta*x)^index_m)/factorial(index_m))) *
+    (factorial(n) * sum((((-1)^(index_s1 + 1)) * (1 - index_s1/n)^(n-1))/(factorial(index_s1)*factorial(n-index_s1))) +
+       -factorial(n) * sum((((-1)^(index_s2+1)) * ((1 - s/k)^(n-1)))/(factorial(index_s2)*factorial(n-index_s2)))
+     )
+}
+fun_D <- function(x,y,n,beta,k) {
+  index_s <- seq.int(1,k,1)
+  index_m <- seq.int(0,n-1,1)
+
+  factorial(n) * sum(vapply(X = index_s,
+                            FUN = function(s) {
+                              (((-1)^(s+1))/(factorial(s)*factorial(n-s))) * sum(
+                                ((beta^index_m)/factorial(index_m)) * (
+                                  (((y^index_m)*exp(-beta*k*y))*(((k-s)^index_m) - (((1-s/k)^(n-1))*(k^index_m)))) +
+                                    ( exp(-beta*x) * ((((x^index_m) * ((1-s/k)^(n-1)))) - (x-s*y)^index_m) )
+                                  )
+                              )
+                            },
+                            FUN.VALUE = numeric(1)))
+}
+

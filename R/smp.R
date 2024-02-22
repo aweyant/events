@@ -171,6 +171,9 @@ psmp_marginal_y <- function(q, n, alpha, beta, lower.tail = TRUE) {
 #' cdf_smp(x = 200, y = 100, n = 3, alpha = 0.03, beta = 2/100)
 #' @export
 cdf_smp <- function(x, y, n, alpha, beta) {
+  if(alpha == 0) {
+    return(cdf_bgge(x = x, y = y, n = n, beta = beta))
+  }
   if(is.infinite(x) & x >= 0 &
      is.infinite(y) & y >= 0) {
     return(1)
