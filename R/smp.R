@@ -179,6 +179,7 @@ cdf_smp <- function(x, y, n, alpha, beta) {
     return(1)
   }
   if(n == 1) {
+    x <- y
     if(x <= 0) {return(0)}
     if(is.infinite(x)) {return(1)}
     return(1 - (1 + alpha*beta*x)^(-1/alpha))

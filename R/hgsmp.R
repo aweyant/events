@@ -8,7 +8,11 @@ NULL
 #' @rdname hgsmp
 #' @export
 rhgsmp <- function(n, alpha, beta, prob_p, prob_q, rounding = FALSE) {
-
+  rsmp(n = n,
+       m = rhgeom(n = n, prob_p = prob_p, prob_q = prob_q),
+       alpha = alpha,
+       beta = beta,
+       rounding = rounding)
 }
 
 phgsmp <- function(

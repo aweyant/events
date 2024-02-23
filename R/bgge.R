@@ -73,6 +73,7 @@ cdf_bgge <- function(x, y, n, beta) {
     return(1)
   }
   if(n == 1) {
+    x <- y
     if(x <= 0) {return(0)}
     if(is.infinite(x)) {return(1)}
     return(stats::pexp(q = x, rate = beta))
