@@ -1,5 +1,5 @@
 #' **B**ivariate Distribution with **G**amma and **G**eneralized
-#' **E**xponential Marginals
+#' **E**xponential Marginals (BGGE)
 #'
 #' rbgge generates sums and maxima of IID exponential vectors of specified
 #' lengths
@@ -44,6 +44,29 @@ pbgge_marginal_x <- function(q, n, beta, lower.tail = TRUE) {
   stats::pgamma(q = q, shape = n, rate = beta, lower.tail = lower.tail)
 }
 
+#' @rdname bgge
+#' @export
+pbgge <- function(x_lower = (1e-10)/beta,
+                  x_upper = Inf,
+                  y_lower = (1e-10)/beta,
+                  y_upper = Inf,
+                  n = 1,
+                  beta,
+                  x_lims = NULL,
+                  y_lims = NULL) {
+  psmp(x_lower = x_lower,
+       x_upper = x_upper,
+       y_lower = y_lower,
+       y_upper = y_upper,
+       n = n,
+       alpha = 0,
+       beta = beta,
+       x_lims = x_lims,
+       y_lims = y_lims)
+}
+
+#' @rdname bgge
+#' @export
 cdf_bgge <- function(x, y, n, beta) {
   if(is.infinite(x) & x >= 0 &
      is.infinite(y) & y >= 0) {

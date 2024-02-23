@@ -4,6 +4,7 @@
 \alias{ted}
 \alias{pteddt}
 \alias{psdeddt}
+\alias{cdf_ted}
 \title{\strong{P}robability of \strong{T}rivariate \strong{E}vent \strong{D}istribution \strong{D}erived
 \strong{T}otal (P TED DT) and \strong{P}robability of \strong{S}et \strong{D}uration \strong{E}vent
 \strong{D}istribution \strong{D}erived \strong{T}otal}
@@ -30,6 +31,16 @@ psdeddt(
   event_length_arg_name = "n",
   lower.tail = TRUE,
   return_NA_outside_support = FALSE
+)
+
+cdf_ted(
+  x = NULL,
+  y = NULL,
+  n = NULL,
+  event_duration_marginal_pmf,
+  event_duration_marginal_pmf_args = NULL,
+  event_bivariate_conditional_cdf,
+  event_bivariate_conditional_cdf_args = NULL
 )
 }
 \arguments{

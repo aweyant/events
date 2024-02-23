@@ -1,3 +1,16 @@
+#' Title
+#'
+#' @param n
+#' @param beta
+#' @param prob_p
+#' @param prob_q
+#' @param rounding
+#'
+#' @name gtetlg
+NULL
+
+#' @rdname gtetlg
+#' @export
 rgtetlg <- function(n, beta, prob_p, prob_q, rounding = FALSE) {
   rbgge(n = n,
         m = rhgeom(n = n, prob_p = prob_p, prob_q = prob_q),
@@ -5,6 +18,8 @@ rgtetlg <- function(n, beta, prob_p, prob_q, rounding = FALSE) {
         rounding = rounding)
 }
 
+#' @rdname gtetlg
+#' @export
 pgtetlg <- function(
     x_lower = (1e-10)/beta,
     x_upper = Inf,
@@ -20,14 +35,36 @@ pgtetlg <- function(
     n_lims = NULL) {
 }
 
+#' @rdname gtetlg
+#' @export
 pgtetlgdt <- function(q, beta, prob_p, prob_q, lower.tail = TRUE) {
 
 }
 
-cdf_gtetlg <- function(x, y, n,
-                       beta, prob_p, prob_q,
-                       tol = 10^(-6),
-                       max_N = 100) {
-  cdf_ted(x = x, y = y, n = n,
-          event_bivariate_conditional_cdf = cdf_bgge)
-}
+#
+# cdf_gtetlg <- function(x, y, n, prob_p, prob_q, beta) {
+#   # substitute(do.call(what = cdf_gtetlg_wrapped,
+#   #                    args = list(x = x, y = y, n = n,
+#   #                                event_duration_marginal_pmf_args = list(prob_p = prob_p, prob_q = prob_q),
+#   #                                event_bivariate_conditional_cdf_args = list(beta = beta))))
+#   cdf_gtetlg_wrapped(x = x, y = y, n = n,
+#                      event_duration_marginal_pmf_args = list(prob_p = prob_p, prob_q = prob_q),
+#                      event_bivariate_conditional_cdf_args = list(beta = beta))
+# }
+
+# cdf_gtetlg_wrapped <- do.call(what = cdf_ted,
+#                               args = list(event_duration_marginal_pmf = dhgeom,
+#                                           event_bivariate_conditional_cdf = cdf_bgge))
+
+
+# dhgeom_clone <- as.function(alist(x = ., prob_p = ., prob_q = .,
+#                                   dhgeom(x,prob_p,prob_q)))
+
+
+# cdf_gtetlg_wrapped <- cdf_ted(event_duration_marginal_pmf = dhgeom,
+#                               event_bivariate_conditional_cdf = cdf_bgge)
+
+# cdf_gtetlg_wrapped <- methods(substitute(do.call(what = cdf_ted,
+#                                                  args = list(event_duration_marginal_pmf = dhgeom,
+#                                                              event_bivariate_conditional_cdf = cdf_bgge))))
+

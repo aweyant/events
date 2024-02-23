@@ -1,3 +1,12 @@
+#' Title
+#'
+#' @inheritParams smp
+#'
+#' @name hgsmp
+NULL
+
+#' @rdname hgsmp
+#' @export
 rhgsmp <- function(n, alpha, beta, prob_p, prob_q, rounding = FALSE) {
 
 }
