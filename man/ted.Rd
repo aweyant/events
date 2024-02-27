@@ -4,7 +4,7 @@
 \alias{ted}
 \alias{pteddt}
 \alias{psdeddt}
-\alias{cdf_ted}
+\alias{construct_cdf_ted}
 \title{\strong{P}robability of \strong{T}rivariate \strong{E}vent \strong{D}istribution \strong{D}erived
 \strong{T}otal (P TED DT) and \strong{P}robability of \strong{S}et \strong{D}uration \strong{E}vent
 \strong{D}istribution \strong{D}erived \strong{T}otal}
@@ -33,14 +33,12 @@ psdeddt(
   return_NA_outside_support = FALSE
 )
 
-cdf_ted(
-  x = NULL,
-  y = NULL,
-  n = NULL,
-  event_duration_marginal_pmf,
-  event_duration_marginal_pmf_args = NULL,
+construct_cdf_ted(
+  args,
   event_bivariate_conditional_cdf,
-  event_bivariate_conditional_cdf_args = NULL
+  event_duration_marginal_pmf,
+  conditional_cdf_argument_transformations,
+  env = parent.frame()
 )
 }
 \arguments{
@@ -52,15 +50,8 @@ cdf_ted(
 
 \item{event_duration_marginal_pmf_args}{a list; arguments for the marginal duration CDF}
 
-\item{event_length_arg_name}{a string; the name of the argument used for the
-duration of an event in the CDF of the magnitude conditioned duration. For
-example, this would be "n" for psmp_marginal_x()}
-
 \item{event_magnitude_conditional_cdf}{a function; the CDF of event magnitudes
 conditioned on durations, e.g. psmp_marginal_x()}
-
-\item{event_magnitude_conditional_cdf_args}{a list; other arguments, such as
-parameters of the distribution}
 
 \item{lower.tail}{logical; if TRUE (default), probabilities are
 \eqn{P[X \le x]}, otherwise, \eqn{P[X > x]}.}

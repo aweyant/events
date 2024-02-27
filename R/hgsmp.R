@@ -1,6 +1,7 @@
 #' Title
 #'
 #' @inheritParams smp
+#' @inheritParams dhgeom
 #'
 #' @name hgsmp
 NULL
@@ -35,8 +36,22 @@ phgsmpdt <- function(q, alpha, beta, prob_p, prob_q, lower.tail = TRUE) {
 
 }
 
+#' @rdname hgsmp
+#' @export
 cdf_hgsmp <- function(x, y, n,
-                      alpha, beta, prob_p, prob_q,
-                      tol = 10^(-6),
-                      max_N = 100) {
+                      alpha, beta, prob_p, prob_q) {
+  cdf_hgsmp_wrapped()(duration = n,
+                      x = x, y = y, n = NULL,
+                      alpha = alpha, beta = beta,
+                      prob_p = prob_p, prob_q = prob_q,
+                      log = FALSE)
+}
+
+cdf_hgsmp_wrapped <- function(...) {
+  construct_cdf_ted(args = c(alist(duration = ),
+                             formals(cdf_smp),
+                             formals(dhgeom)[-1]),
+                    event_bivariate_conditional_cdf = cdf_smp,
+                    event_duration_marginal_pmf = dhgeom,
+                    conditional_cdf_argument_transformations = list("n = k"))
 }

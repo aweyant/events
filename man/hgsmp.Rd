@@ -3,9 +3,12 @@
 \name{hgsmp}
 \alias{hgsmp}
 \alias{rhgsmp}
+\alias{cdf_hgsmp}
 \title{Title}
 \usage{
 rhgsmp(n, alpha, beta, prob_p, prob_q, rounding = FALSE)
+
+cdf_hgsmp(x, y, n, alpha, beta, prob_p, prob_q)
 }
 \arguments{
 \item{n}{when provided to rsmp, this is the number of observations. Otherwise
@@ -14,9 +17,16 @@ it represents the duration of an event.}
 \item{alpha, beta}{tail/shape parameter and scale parameters of a Multivariate
 Pareto II distribution (see details for the parameterization used).}
 
+\item{prob_p}{probability of success in each trial after the first trial, if
+the first trial was not a success. \eqn{0 <} prob_p \eqn{\le 1}.}
+
+\item{prob_q}{probability of success in the first trial. \eqn{0 \le} prob_q \eqn{\le 1}}
+
 \item{rounding}{logical; if TRUE, generated Pareto II values are rounded to
 the nearest whole number. This feature is present in case this is important
 for a comparison of actual observations to some theoretical output.}
+
+\item{x, y}{numbers; magnitude and maxima of a Pareto II vector}
 }
 \description{
 Title

@@ -3,31 +3,20 @@
 \name{gtetlg}
 \alias{gtetlg}
 \alias{rgtetlg}
-\alias{pgtetlg}
-\alias{pgtetlgdt}
 \title{Title}
 \usage{
 rgtetlg(n, beta, prob_p, prob_q, rounding = FALSE)
-
-pgtetlg(
-  x_lower = (1e-10)/beta,
-  x_upper = Inf,
-  y_lower = (1e-10)/beta,
-  y_upper = Inf,
-  n_lower = 1,
-  n_upper = Inf,
-  beta,
-  prob_p,
-  prob_q,
-  x_lims = NULL,
-  y_lims = NULL,
-  n_lims = NULL
-)
-
-pgtetlgdt(q, beta, prob_p, prob_q, lower.tail = TRUE)
 }
 \arguments{
-\item{rounding}{}
+\item{n}{when provided to rsmp, this is the number of observations. Otherwise
+it represents the duration of an event.}
+
+\item{beta}{numeric > 0; the rate parameter of the exponential distribution
+which describes individual exceedances. It is the reciprocal of the mean.}
+
+\item{rounding}{logical; if TRUE, generated Pareto II values are rounded to
+the nearest whole number. This feature is present in case this is important
+for a comparison of actual observations to some theoretical output.}
 }
 \description{
 Title

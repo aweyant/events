@@ -1,10 +1,6 @@
 #' Title
 #'
-#' @param n
-#' @param beta
-#' @param prob_p
-#' @param prob_q
-#' @param rounding
+#' @inheritParams bgge
 #'
 #' @name gtetlg
 NULL
@@ -18,8 +14,6 @@ rgtetlg <- function(n, beta, prob_p, prob_q, rounding = FALSE) {
         rounding = rounding)
 }
 
-#' @rdname gtetlg
-#' @export
 pgtetlg <- function(
     x_lower = (1e-10)/beta,
     x_upper = Inf,
@@ -35,8 +29,6 @@ pgtetlg <- function(
     n_lims = NULL) {
 }
 
-#' @rdname gtetlg
-#' @export
 pgtetlgdt <- function(q, beta, prob_p, prob_q, lower.tail = TRUE) {
 
 }

@@ -23,13 +23,8 @@
 #' @inheritParams determine_stopping_point
 #' @param q a number; the event total, including the below-threshold portion
 #' @param threshold a number; the minimum threshold used to define events
-#' @param event_length_arg_name a string; the name of the argument used for the
-#' duration of an event in the CDF of the magnitude conditioned duration. For
-#' example, this would be "n" for psmp_marginal_x()
 #' @param event_magnitude_conditional_cdf a function; the CDF of event magnitudes
 #' conditioned on durations, e.g. psmp_marginal_x()
-#' @param event_magnitude_conditional_cdf_args a list; other arguments, such as
-#' parameters of the distribution
 #' @param lower.tail logical; if TRUE (default), probabilities are
 #' \eqn{P[X \le x]}, otherwise, \eqn{P[X > x]}.
 #' @param length integer; the duration of the event
@@ -220,9 +215,7 @@ psdeddt <- function(q = NULL,
   }
 }
 
-#' @rdname ted
-#'
-#' @export
+
 cdf_ted <- function(x = NULL, y = NULL, n = NULL,
                     event_duration_marginal_pmf,
                     event_duration_marginal_pmf_args = NULL,
@@ -257,6 +250,51 @@ cdf_ted <- function(x = NULL, y = NULL, n = NULL,
                           event_bivariate_conditional_cdf_args = event_bivariate_conditional_cdf_args))
   }
   return(trivariate_cdf)
+}
+
+#' @rdname ted
+#'
+#' @export
+construct_cdf_ted <- function(args,
+                              event_bivariate_conditional_cdf,
+                              event_duration_marginal_pmf,
+                              conditional_cdf_argument_transformations,
+                              env = parent.frame()) {
+  body = substitute({
+    arguments = c(as.list(environment()))
+    #print(arguments)
+    #print(names(arguments) %in% names(formals(duration_pmf)))
+    pmf_arguments = arguments[names(arguments) %in% names(formals(event_duration_marginal_pmf))]
+    #print(pmf_arguments)
+    cdf_arguments = arguments[names(arguments) %in% names(formals(event_bivariate_conditional_cdf))]
+    #print("...")
+    #print(names(arguments) %in% names(formals(conditional_cdf)))
+    #print(cdf_arguments)
+
+    sum(vapply(X = seq.int(1,duration,1),
+               FUN = function(k) {
+
+                 temp_str = paste(conditional_cdf_argument_transformations, collapse = ";")
+                 transformed_cdf_arguments = within(data = cdf_arguments,
+                                                    expr = {
+                                                      eval(parse(text = temp_str))
+                                                    })
+
+                 pmf_arguments$x <- k
+
+                 #print(pmf_arguments)
+                 #print(".....")
+                 #print(transformed_cdf_arguments)
+
+                 do.call(what = event_duration_marginal_pmf,
+                         args = pmf_arguments) *
+                   do.call(what = event_bivariate_conditional_cdf,
+                           transformed_cdf_arguments)
+               },
+               FUN.VALUE = numeric(1)))
+  })
+  args <- as.pairlist(args)
+  eval(call("function", args, body), env)
 }
 
 #' Find a quantile of a discrete distribution to achieve a low exceedance probability
