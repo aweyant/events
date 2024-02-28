@@ -3,10 +3,36 @@
 \name{hgsmp}
 \alias{hgsmp}
 \alias{rhgsmp}
+\alias{phgsmp}
+\alias{phgsmpdt}
 \alias{cdf_hgsmp}
-\title{Title}
+\title{\strong{H}urdle \strong{G}eometric \strong{S}ums & \strong{M}axima of \strong{P}areto II Vectors}
 \usage{
 rhgsmp(n, alpha, beta, prob_p, prob_q, rounding = FALSE)
+
+phgsmp(
+  x_lower = 0,
+  x_upper = Inf,
+  y_lower = 0,
+  y_upper = Inf,
+  n_lower = 1,
+  n_upper = Inf,
+  alpha,
+  beta,
+  prob_p,
+  prob_q
+)
+
+phgsmpdt(
+  q,
+  threshold,
+  alpha,
+  beta,
+  prob_p,
+  prob_q,
+  lower.tail = TRUE,
+  log = FALSE
+)
 
 cdf_hgsmp(x, y, n, alpha, beta, prob_p, prob_q)
 }
@@ -26,8 +52,22 @@ the first trial was not a success. \eqn{0 <} prob_p \eqn{\le 1}.}
 the nearest whole number. This feature is present in case this is important
 for a comparison of actual observations to some theoretical output.}
 
+\item{x_lower, x_upper, y_lower, y_upper}{each are individual numbers; limits of
+integration of the SMP CDF}
+
+\item{n_lower, n_upper}{each are individual numbers; limits of summation of
+for the duration of the a trivariate distribution, where n_lower is the
+lowest duration included in the summation and n_upper is the largest included
+in the summation; for example, n_lower = 3, n_upper = 5 sums over {3,4,5},
+whereas n_lower = 3, n_upper = 3 sums over {3}.}
+
+\item{q}{a number; value given univariate functions of univariate marginals}
+
+\item{lower.tail}{logical; if TRUE (default), probabilities are
+\eqn{P[X \le x]}, otherwise, \eqn{P[X > x]}.}
+
 \item{x, y}{numbers; magnitude and maxima of a Pareto II vector}
 }
 \description{
-Title
+Probability and random generation functions for the trivariate HGSMP distribution
 }

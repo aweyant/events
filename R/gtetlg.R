@@ -1,5 +1,6 @@
 #' Title
 #'
+#' @inheritParams hgsmp
 #' @inheritParams bgge
 #'
 #' @name gtetlg
@@ -14,19 +15,36 @@ rgtetlg <- function(n, beta, prob_p, prob_q, rounding = FALSE) {
         rounding = rounding)
 }
 
+#' @rdname gtetlg
+#' @export
 pgtetlg <- function(
-    x_lower = (1e-10)/beta,
+    x_lower = 0,
     x_upper = Inf,
-    y_lower = (1e-10)/beta,
+    y_lower = 0,
     y_upper = Inf,
     n_lower = 1,
     n_upper = Inf,
     beta,
     prob_p,
-    prob_q,
-    x_lims = NULL,
-    y_lims = NULL,
-    n_lims = NULL) {
+    prob_q) {
+  phgsmp(x_lower = x_lower,
+         x_upper = x_upper,
+         y_lower = y_lower,
+         y_upper = y_upper,
+         n_lower = n_lower,
+         n_upper = n_upper,
+         alpha = 0,
+         beta = beta,
+         prob_p = prob_p,
+         prob_q = prob_q)
+}
+
+#' @rdname gtetlg
+#' @export
+cdf_gtetlg <- function(x, y, n,
+                       alpha, beta, prob_p, prob_q) {
+  cdf_hgsmp(x = x, y = y, n = n,
+            alpha = 0, beta = beta, prob_p = prob_p, prob_q = prob_q)
 }
 
 pgtetlgdt <- function(q, beta, prob_p, prob_q, lower.tail = TRUE) {

@@ -12,15 +12,13 @@
 rsmp(n, alpha, beta, m, rounding = FALSE)
 
 psmp(
-  x_lower = (1e-10)/beta,
+  x_lower = 0,
   x_upper = Inf,
-  y_lower = (1e-10)/beta,
+  y_lower = 0,
   y_upper = Inf,
   n = 1,
   alpha,
-  beta,
-  x_lims = NULL,
-  y_lims = NULL
+  beta
 )
 
 psmp_marginal_x(q, n, alpha, beta, lower.tail = TRUE)
@@ -47,9 +45,6 @@ for a comparison of actual observations to some theoretical output.}
 
 \item{x_lower, x_upper, y_lower, y_upper}{each are individual numbers; limits of
 integration of the SMP CDF}
-
-\item{x_lims, y_lims}{each are vectors of length 2; an alternative way to
-specify the limits of integration as vectors of upper and lower bounds}
 
 \item{q}{a number; value given univariate functions of univariate marginals}
 

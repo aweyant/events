@@ -20,8 +20,6 @@
 #' for a comparison of actual observations to some theoretical output.
 #' @param x_lower,x_upper,y_lower,y_upper each are individual numbers; limits of
 #' integration of the SMP CDF
-#' @param x_lims,y_lims each are vectors of length 2; an alternative way to
-#' specify the limits of integration as vectors of upper and lower bounds
 #'
 #' @return
 #'  rsmp generates random values of the distribution and returns a them
@@ -67,15 +65,40 @@ rsmp <- function(n, alpha, beta, m, rounding = FALSE) {
 #' psmp(x_upper = 100, y_lower = 40, n = 3, alpha = 0.03, beta = 1/100)
 #'
 #' @export
-psmp <- function(x_lower = (1e-10)/beta,
+psmp <- function(x_lower = 0,
                  x_upper = Inf,
-                 y_lower = (1e-10)/beta,
+                 y_lower = 0,
                  y_upper = Inf,
                  n = 1,
                  alpha,
-                 beta,
-                 x_lims = NULL,
-                 y_lims = NULL) {
+                 beta) {
+  psmp_wrapped()(x_lower = x_lower,
+                 x_upper = x_upper,
+                 y_lower = y_lower,
+                 y_upper = y_upper,
+                 n = n,
+                 alpha = alpha,
+                 beta = beta)
+}
+
+psmp_wrapped <- function(...) {
+  construct_pbed(args = c(x_lower = 0,
+                          x_upper = Inf,
+                          y_lower = 0,
+                          y_upper = Inf,
+                          formals(cdf_smp)[!(names(formals(cdf_smp)) %in% c("x","y"))]),
+                 cdf_bed = cdf_smp)
+}
+
+psmp_hardcoded <- function(x_lower = (1e-10)/beta,
+                           x_upper = Inf,
+                           y_lower = (1e-10)/beta,
+                           y_upper = Inf,
+                           n = 1,
+                           alpha,
+                           beta,
+                           x_lims = NULL,
+                           y_lims = NULL) {
 
   if(!is.null(x_lims)) {
     x_lower = x_lims[1]
@@ -152,17 +175,13 @@ psmp_marginal_y <- function(q, n, alpha, beta, lower.tail = TRUE) {
     return(psmp(y_upper = q,
                 n = n,
                 alpha = alpha,
-                beta = beta,
-                x_lims = NULL,
-                y_lims = NULL))
+                beta = beta))
   }
   else{
     return(psmp(y_lower = q,
                 n = n,
                 alpha = alpha,
-                beta = beta,
-                x_lims = NULL,
-                y_lims = NULL))
+                beta = beta))
   }
 }
 
@@ -184,12 +203,12 @@ cdf_smp <- function(x, y, n, alpha, beta) {
     if(is.infinite(x)) {return(1)}
     return(1 - (1 + alpha*beta*x)^(-1/alpha))
   }
-  if(x < 0 | y < 0) {
+  if(x <= 0 | y <= 0) {
     # WRITTEN AND TESTED
     # print("case 1")
     return(0)
   }
-  else if(0 <= x & x <= y) {
+  else if(0 < x & x <= y) {
     # WRITTEN, UNTESTED
     # print("case 2")
     index <- seq.int(0,n-1,1)

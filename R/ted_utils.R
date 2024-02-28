@@ -271,6 +271,10 @@ construct_cdf_ted <- function(args,
     #print(names(arguments) %in% names(formals(conditional_cdf)))
     #print(cdf_arguments)
 
+    if(duration == 0) {
+      return(0)
+    }
+
     sum(vapply(X = seq.int(1,duration,1),
                FUN = function(k) {
 
@@ -296,6 +300,112 @@ construct_cdf_ted <- function(args,
   args <- as.pairlist(args)
   eval(call("function", args, body), env)
 }
+
+#' @rdname ted
+#'
+#' @export
+construct_pted <- function(args,
+                           pbed,
+                           event_duration_marginal_pmf,
+                           pbed_argument_transformations,
+                           env = parent.frame(),
+                           tol = 10^(-6),
+                           max_N = 160) {
+  body = substitute({
+    arguments = c(as.list(environment()))
+    #print(arguments)
+    #print(names(arguments) %in% names(formals(duration_pmf)))
+    pmf_arguments = arguments[names(arguments) %in% names(formals(event_duration_marginal_pmf))]
+    #print(pmf_arguments)
+    pbed_arguments = arguments[names(arguments) %in% names(formals(pbed))]
+    #print("...")
+    #print(names(arguments) %in% names(formals(conditional_cdf)))
+    #print(pbed_arguments)
+    if(n_lower < 1){
+      n_lower <- 1
+    }
+    if(is.infinite(n_upper)) {
+      n_upper <- determine_stopping_point(event_duration_marginal_pmf = event_duration_marginal_pmf,
+                                          event_duration_marginal_pmf_args = pmf_arguments,
+                                          tol = tol,
+                                          max_N = max_N)
+    }
+
+    sum(vapply(X = seq.int(n_lower-1, n_upper, 1),
+               FUN = function(k) {
+
+                 temp_str = paste(pbed_argument_transformations, collapse = ";")
+                 transformed_pbed_arguments = within(data = pbed_arguments,
+                                                    expr = {
+                                                      eval(parse(text = temp_str))
+                                                    })
+
+                 pmf_arguments$x <- k
+
+                 do.call(what = event_duration_marginal_pmf,
+                         args = pmf_arguments) *
+                   do.call(what = pbed,
+                           transformed_pbed_arguments)
+               },
+               FUN.VALUE = numeric(1)))
+  })
+  args <- as.pairlist(args)
+  eval(call("function", args, body), env)
+}
+
+construct_pteddt <- function(args, # q, threshold, lower.tail, log.p
+                             event_magnitude_conditional_cdf,
+                             event_duration_marginal_pmf,
+                             event_magnitude_conditional_cdf_argument_transformations,
+                             env = parent.frame(),
+                             tol = 10^(-6),
+                             max_N = 160) {
+  body = substitute({
+    arguments = c(as.list(environment()))
+    #print(arguments)
+    #print(names(arguments) %in% names(formals(duration_pmf)))
+    pmf_arguments = arguments[names(arguments) %in% names(formals(event_duration_marginal_pmf))]
+    #print(pmf_arguments)
+    event_magnitude_conditional_cdf_arguments = arguments[names(arguments) %in% names(formals(event_magnitude_conditional_cdf))]
+    #print("...")
+    #print(names(arguments) %in% names(formals(conditional_cdf)))
+    #print(event_magnitude_conditional_cdf_arguments)
+
+    N <- determine_stopping_point(event_duration_marginal_pmf = event_duration_marginal_pmf,
+                                  event_duration_marginal_pmf_args = pmf_arguments,
+                                  tol = tol,
+                                  max_N = max_N)
+
+    nep <- sum(vapply(X = seq.int(1, N, 1),
+                      FUN = function(k) {
+
+                        temp_str = paste(event_magnitude_conditional_cdf_argument_transformations, collapse = ";")
+                        transformed_event_magnitude_conditional_cdf_arguments = within(data = event_magnitude_conditional_cdf_arguments,
+                                                                                       expr = {
+                                                                                         eval(parse(text = temp_str))
+                                                                                         q = q - (k*threshold)
+                                                                                         lower.tail = TRUE
+                                                                                       })
+                        pmf_arguments$log <- FALSE
+                        pmf_arguments$x <- k
+                        if(transformed_event_magnitude_conditional_cdf_arguments$q <= 0) {return(0)}
+                        else{
+                          do.call(what = event_duration_marginal_pmf,
+                                  args = pmf_arguments) *
+                            do.call(what = event_magnitude_conditional_cdf,
+                                    transformed_event_magnitude_conditional_cdf_arguments)
+                        }
+                      },
+                      FUN.VALUE = numeric(1)))
+    return_prob = nep
+    if(!lower.tail) {return_prob <- 1 - return_prob}
+    if(log) {return_prob <- log(return_prob)}
+    return(return_prob)
+  })
+  args <- as.pairlist(args)
+  eval(call("function", args, body), env)
+}
+
 
 #' Find a quantile of a discrete distribution to achieve a low exceedance probability
 #'
@@ -332,8 +442,10 @@ determine_stopping_point <- function(event_duration_marginal_pmf,
   max_N_exceeded <- FALSE
   N <- 10
 
-  event_duration_marginal_pmf_args <- within(event_duration_marginal_pmf_args, rm("x"))
-  event_duration_marginal_pmf_args <- within(event_duration_marginal_pmf_args, rm("log"))
+  suppressWarnings({
+    event_duration_marginal_pmf_args <- within(event_duration_marginal_pmf_args, rm("x"))
+    event_duration_marginal_pmf_args <- within(event_duration_marginal_pmf_args, rm("log"))
+  })
 
   while(1 - sum(
     eval(

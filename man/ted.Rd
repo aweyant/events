@@ -5,6 +5,7 @@
 \alias{pteddt}
 \alias{psdeddt}
 \alias{construct_cdf_ted}
+\alias{construct_pted}
 \title{\strong{P}robability of \strong{T}rivariate \strong{E}vent \strong{D}istribution \strong{D}erived
 \strong{T}otal (P TED DT) and \strong{P}robability of \strong{S}et \strong{D}uration \strong{E}vent
 \strong{D}istribution \strong{D}erived \strong{T}otal}
@@ -39,6 +40,16 @@ construct_cdf_ted(
   event_duration_marginal_pmf,
   conditional_cdf_argument_transformations,
   env = parent.frame()
+)
+
+construct_pted(
+  args,
+  pbed,
+  event_duration_marginal_pmf,
+  pbed_argument_transformations,
+  env = parent.frame(),
+  tol = 10^(-6),
+  max_N = 160
 )
 }
 \arguments{

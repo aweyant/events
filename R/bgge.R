@@ -46,23 +46,19 @@ pbgge_marginal_x <- function(q, n, beta, lower.tail = TRUE) {
 
 #' @rdname bgge
 #' @export
-pbgge <- function(x_lower = (1e-10)/beta,
+pbgge <- function(x_lower = 0,
                   x_upper = Inf,
-                  y_lower = (1e-10)/beta,
+                  y_lower = 0,
                   y_upper = Inf,
                   n = 1,
-                  beta,
-                  x_lims = NULL,
-                  y_lims = NULL) {
+                  beta) {
   psmp(x_lower = x_lower,
        x_upper = x_upper,
        y_lower = y_lower,
        y_upper = y_upper,
        n = n,
        alpha = 0,
-       beta = beta,
-       x_lims = x_lims,
-       y_lims = y_lims)
+       beta = beta)
 }
 
 #' @rdname bgge
@@ -78,7 +74,7 @@ cdf_bgge <- function(x, y, n, beta) {
     if(is.infinite(x)) {return(1)}
     return(stats::pexp(q = x, rate = beta))
   }
-  if(x < 0 | y < 0) {
+  if(x <= 0 | y <= 0) {
     # WRITTEN AND TESTED
     # print("case 1")
     return(0)
