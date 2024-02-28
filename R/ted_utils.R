@@ -331,7 +331,7 @@ construct_pted <- function(args,
                                           max_N = max_N)
     }
 
-    sum(vapply(X = seq.int(n_lower-1, n_upper, 1),
+    sum(vapply(X = seq.int(n_lower, n_upper, 1),
                FUN = function(k) {
 
                  temp_str = paste(pbed_argument_transformations, collapse = ";")
