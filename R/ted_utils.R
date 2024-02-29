@@ -38,23 +38,6 @@
 NULL
 
 #' @rdname ted
-#' @examples
-#' q = 100; length = 2; threshold = 20
-#' alpha = 0.02; beta = 0.04
-#' prob_p = 0.6; prob_q = 0.7
-#' event_length_arg_name = "n"
-#'
-#' pteddt(q = q,
-#' threshold = threshold,
-#' event_duration_marginal_pmf = dhgeom,
-#' event_duration_marginal_pmf_args = list(prob_p = prob_p, prob_q = prob_q),
-#' event_length_arg_name = event_length_arg_name,
-#' event_magnitude_conditional_cdf = psmp_marginal_x,
-#' event_magnitude_conditional_cdf_args = list(alpha = alpha, beta = beta),
-#' lower.tail = TRUE,
-#' tol = 10^(-6),
-#' max_N = 100)
-#' @export
 pteddt <- function(q = NULL,
                    threshold,
                    event_duration_marginal_pmf,
@@ -140,7 +123,6 @@ pteddt <- function(q = NULL,
 #' 2 4 357.7778 187.8859
 #' 3 2 219.1081 140.8779
 #' }
-#' @export
 psdeddt <- function(q = NULL,
                     length = 1,
                     threshold,
@@ -253,8 +235,6 @@ cdf_ted <- function(x = NULL, y = NULL, n = NULL,
 }
 
 #' @rdname ted
-#'
-#' @export
 construct_cdf_ted <- function(args,
                               event_bivariate_conditional_cdf,
                               event_duration_marginal_pmf,
@@ -302,8 +282,6 @@ construct_cdf_ted <- function(args,
 }
 
 #' @rdname ted
-#'
-#' @export
 construct_pted <- function(args,
                            pbed,
                            event_duration_marginal_pmf,

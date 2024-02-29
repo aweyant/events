@@ -9,6 +9,8 @@
 #' lowest duration included in the summation and n_upper is the largest included
 #' in the summation; for example, n_lower = 3, n_upper = 5 sums over {3,4,5},
 #' whereas n_lower = 3, n_upper = 3 sums over {3}.
+#' @inheritParams create_events_from_vector
+#' @param log logical; if TRUE, probabilities p are given as log(p).
 #'
 #' @name hgsmp
 NULL

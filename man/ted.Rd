@@ -101,21 +101,6 @@ psdeddt() evaluates the CDF for event totals of a given duration (hence, "set
 duration").
 }
 \examples{
-q = 100; length = 2; threshold = 20
-alpha = 0.02; beta = 0.04
-prob_p = 0.6; prob_q = 0.7
-event_length_arg_name = "n"
-
-pteddt(q = q,
-threshold = threshold,
-event_duration_marginal_pmf = dhgeom,
-event_duration_marginal_pmf_args = list(prob_p = prob_p, prob_q = prob_q),
-event_length_arg_name = event_length_arg_name,
-event_magnitude_conditional_cdf = psmp_marginal_x,
-event_magnitude_conditional_cdf_args = list(alpha = alpha, beta = beta),
-lower.tail = TRUE,
-tol = 10^(-6),
-max_N = 100)
 rsmp(n = 3, m = c(3,4,2), alpha = 0.03, beta = 1/100)
 \dontrun{
   n        x        y
