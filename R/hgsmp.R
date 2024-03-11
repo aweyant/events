@@ -88,6 +88,32 @@ phgsmpdt_wrapped <- function(...) {
 
 #' @rdname hgsmp
 #' @export
+qhgsmpdt <- function(p, threshold,
+                     alpha, beta,
+                     prob_p, prob_q,
+                     lower.tail = TRUE,
+                     log = FALSE) {
+  qhgsmpdt_wrapped()(p = p,
+                     threshold = threshold,
+                     alpha = alpha,
+                     beta = beta,
+                     prob_p = prob_p,
+                     prob_q = prob_q,
+                     lower.tail = lower.tail,
+                     log = log)}
+
+qhgsmpdt_wrapped <- function(...) {
+  construct_quantile(args = c(alist(p = ),
+                              formals(phgsmpdt)[-1]),
+                     cdf = phgsmpdt,
+                     cdf_support = c(0, Inf),
+                     cdf_search_interval = c(0, 10000),
+                     tol = 1e-6,
+                     env = parent.frame())
+}
+
+#' @rdname hgsmp
+#' @export
 cdf_hgsmp <- function(x, y, n,
                       alpha, beta, prob_p, prob_q) {
   cdf_hgsmp_wrapped()(duration = n,
