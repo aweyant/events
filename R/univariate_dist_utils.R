@@ -72,3 +72,43 @@ construct_quantile <- function(args,
   args <- as.pairlist(args)
   eval(call("function", args, body), env)
 }
+
+construct_order_statistic_cdf <- function(args,
+                                          cdf,
+                                          env = parent.frame()) {
+  body = substitute({
+    arguments <- c(as.list(environment()))
+
+    # print(arguments[is.na(match(x = names(arguments),
+    #                              c("log", "log.p", "lower.tail",
+    #                                "rank", "sample_size")))])
+    nep <- do.call(what = cdf,
+                  args = arguments[is.na(match(x = names(arguments),
+                                                c("log", "log.p", "lower.tail",
+                                                  "rank", "sample_size")))])
+
+
+    if(nep == 0) {
+      os_nep <- 0
+    }
+    else if(nep == 1) {
+      os_nep <- 1
+    }
+    else{
+      #print(arguments$rank)
+      #print(arguments$sample_size)
+      sum_iteration <- seq.int(from = arguments$rank,
+                               to = arguments$sample_size, by = 1)
+      #print(sum_iteration)
+      os_nep <- sum(
+        exp(
+          lchoose(arguments$sample_size, sum_iteration) +
+            sum_iteration*log(nep) +
+            (arguments$sample_size - sum_iteration)*log(1-nep)))}
+    if(!arguments$lower.tail) {os_nep <- 1-os_nep}
+    if(arguments$log.p) {os_nep <- log(os_nep)}
+    return(os_nep)
+    })
+  args <- as.pairlist(args)
+  eval(call("function", args, body), env)
+}
