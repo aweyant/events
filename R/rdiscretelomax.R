@@ -32,6 +32,15 @@
 #' ggplot2::geom_path() +
 #' ggplot2::scale_x_continuous(breaks = 1:15) +
 #' ggplot2::scale_y_continuous(trans = "log10")
+#'
+#' qdiscretelomax(p = seq(0.54,0.99, by = 0.05),
+#' dlomax_alpha = c(0,0.1,0.3),
+#' dlomax_prob_p = 0.5,
+#' return_type = "data.frame") %>%
+#' ggplot2::ggplot(ggplot2::aes(x = lte_prob,
+#' y= q, color = dlomax_alpha)) +
+#' ggplot2::geom_point() +
+#' ggplot2::lims(y = c(0,NA))
 #' }
 ddiscretelomax <- function(x, dlomax_alpha, dlomax_prob_p, return_type = "vector") {
   # PRESERVE ORIGINAL Xs IN CASE BAD ARGUMENTS ARE GIVEN BUT WE STILL WANT TO
@@ -104,6 +113,24 @@ discretelomax_check_q <- function() {
   })
 
   rlang::eval_bare(call_q_warning, env = parent.frame())
+  NULL
+}
+
+discretelomax_check_p <- function() {
+  # Check p
+  call_p_gte_0 <- rlang::expr(p[which(p < 0)] <- NaN)
+  rlang::eval_bare(call_p_gte_0, env = parent.frame())
+
+  call_p_lt_1 <- rlang::expr(p[which(p >= 1)] <- NaN)
+  rlang::eval_bare(call_p_lt_1, env = parent.frame())
+
+  call_p_warning <- rlang::expr({
+    if(any(is.nan(p))) {
+      warning("p is supported on [0,1). NaN(s) returned.")
+    }
+  })
+
+  rlang::eval_bare(call_p_warning, env = parent.frame())
   NULL
 }
 
@@ -208,6 +235,53 @@ pdiscretelomax <- function(q, dlomax_alpha, dlomax_prob_p,
   }
   else {
     return(prob_out)
+  }
+}
+
+qdiscretelomax <- function(p, dlomax_alpha, dlomax_prob_p, lower.tail = TRUE, return_type = "vector") {
+  if(return_type == "data.frame") {
+    p_grid_df <- rep(p, times = length(dlomax_prob_p) * length(dlomax_alpha))
+    dlomax_alpha_grid_df <- rep(dlomax_alpha, each = length(p) * length(dlomax_prob_p))
+    dlomax_prob_p_grid_df <- rep(dlomax_prob_p, times = length(p) * length(dlomax_alpha))
+  }
+
+  # CHECK p INPUT
+  if(!lower.tail) {p <- 1 - p}
+  discretelomax_check_p()
+  # CHECK PARAMETERS
+  discretelomax_check_param_args()
+
+  # Expand combinations of arguments into a grid
+  p_grid <- rep(p, times = length(dlomax_prob_p) * length(dlomax_alpha))
+  dlomax_alpha_grid <- rep(dlomax_alpha, each = length(p) * length(dlomax_prob_p))
+  dlomax_prob_p_grid <- rep(dlomax_prob_p, times = length(p) * length(dlomax_alpha))
+
+  # Create vector of probabilities to return
+  quant_out <- numeric(length(dlomax_alpha_grid))
+
+  # quant_out[which(dlomax_alpha_grid == 0)] <- 1 + qgeom(
+  #   p = p_grid[which(dlomax_alpha_grid == 0)],
+  #   prob = dlomax_prob_p_grid[which(dlomax_alpha_grid == 0)])
+  quant_out[which(dlomax_alpha_grid == 0)] <- ceiling(
+    log(1-p_grid[which(dlomax_alpha_grid == 0)])/log(1 - dlomax_prob_p_grid[which(dlomax_alpha_grid == 0)]))
+  quant_out[which(dlomax_alpha_grid > 0)] <- {
+    ceiling(
+      -(1/dlomax_alpha_grid[which(dlomax_alpha_grid > 0)]) *
+        (1/log(1-dlomax_prob_p_grid[which(dlomax_alpha_grid > 0)])) *
+        (1 - (1 - p_grid[which(dlomax_alpha_grid > 0)])^dlomax_alpha_grid[which(dlomax_alpha_grid > 0)]) / ((1 - p_grid[which(dlomax_alpha_grid > 0)])^(dlomax_alpha_grid[which(dlomax_alpha_grid > 0)]))
+    )
+  }
+
+  if(return_type == "data.frame") {
+    return(data.frame(
+      q = quant_out,
+      dlomax_prob_p = dlomax_prob_p_grid_df,
+      dlomax_alpha = dlomax_alpha_grid_df,
+      lte_prob = p_grid_df
+    ))
+  }
+  else {
+    return(quant_out)
   }
 }
 
