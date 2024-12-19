@@ -1,11 +1,10 @@
-#' Title
+#' Discrete Lomax (Pareto II) Distribution
+#'
+#' @name discretelomax
 #'
 #' @param x
 #' @param dlomax_alpha
 #' @param dlomax_prob_p
-#'
-#' @return
-#' @export
 #'
 #' @details
 #' In the output vector, it is the prop_p which vary more quickly. If you
@@ -42,6 +41,10 @@
 #' ggplot2::geom_point() +
 #' ggplot2::lims(y = c(0,NA))
 #' }
+NULL
+
+#' @rdname discretelomax
+#' @export
 ddiscretelomax <- function(x, dlomax_alpha, dlomax_prob_p, return_type = "vector") {
   # PRESERVE ORIGINAL Xs IN CASE BAD ARGUMENTS ARE GIVEN BUT WE STILL WANT TO
   # RETURN A DATAFRAME WITH DETAILS
@@ -52,7 +55,7 @@ ddiscretelomax <- function(x, dlomax_alpha, dlomax_prob_p, return_type = "vector
   }
 
   # CHECK X INPUT
-  discrete_lomax_check_x()
+  discretelomax_check_x()
   # CHECK PARAMETERS
   discretelomax_check_param_args()
 
@@ -103,7 +106,9 @@ discretelomax_check_x <- function() {
 
 discretelomax_check_q <- function() {
   # Check x
-  call_q_gt_0 <- rlang::expr(q[which(q <= 0)] <- NaN)
+  call_q_gt_0 <- rlang::expr(
+    q[FALSE#which(q <= 0)
+      ] <- NaN)
   rlang::eval_bare(call_q_gt_0, env = parent.frame())
 
   call_q_warning <- rlang::expr({
@@ -163,6 +168,8 @@ discretelomax_check_param_args <- function() {
   NULL
 }
 
+#' @rdname discretelomax
+#' @export
 rdiscretelomax <- function(n, dlomax_alpha, dlomax_prob_p) {
 
   discretelomax_check_param_args()
@@ -178,7 +185,7 @@ rdiscretelomax <- function(n, dlomax_alpha, dlomax_prob_p) {
     )
 
   count_out[dlomax_alpha_grid > 0] <- ceiling(
-    rexp(n = sum(dlomax_alpha_grid > 0)) / rgamma(
+    stats::rexp(n = sum(dlomax_alpha_grid > 0)) / rgamma(
       n = sum(dlomax_alpha_grid > 0),
       shape = 1/dlomax_alpha_grid[which(dlomax_alpha_grid > 0)],
       rate = 1 / (-dlomax_alpha_grid[which(dlomax_alpha_grid > 0)] * log(1 - dlomax_prob_p_grid[which(dlomax_alpha_grid > 0)])) )
@@ -187,6 +194,8 @@ rdiscretelomax <- function(n, dlomax_alpha, dlomax_prob_p) {
   count_out
 }
 
+#' @rdname discretelomax
+#' @export
 pdiscretelomax <- function(q, dlomax_alpha, dlomax_prob_p,
                            lower.tail = TRUE, log.p = FALSE, return_type = "vector") {
   # PRESERVE ORIGINAL Xs IN CASE BAD ARGUMENTS ARE GIVEN BUT WE STILL WANT TO
@@ -210,13 +219,15 @@ pdiscretelomax <- function(q, dlomax_alpha, dlomax_prob_p,
   # Create vector of probabilities to return
   prob_out <- numeric(length(dlomax_alpha_grid))
 
-  prob_out[which(dlomax_alpha_grid == 0)] <- pgeom(
+  prob_out[which(dlomax_alpha_grid == 0)] <- stats::pgeom(
     q = floor(q_grid - 1),
     prob = dlomax_prob_p_grid[which(dlomax_alpha_grid == 0)])
   prob_out[which(dlomax_alpha_grid > 0)] <- {
     1 - (1 - dlomax_alpha_grid[which(dlomax_alpha_grid > 0)]*floor(q)*log(1-dlomax_prob_p_grid[which(dlomax_alpha_grid > 0)])
     )^(-1/dlomax_alpha_grid[which(dlomax_alpha_grid > 0)])
   }
+
+  prob_out[which(q_grid < 1)] <- 0
 
   if(log.p) {
     prob_out = log(prob_out)
@@ -237,7 +248,8 @@ pdiscretelomax <- function(q, dlomax_alpha, dlomax_prob_p,
     return(prob_out)
   }
 }
-
+#' @rdname discretelomax
+#' @export
 qdiscretelomax <- function(p, dlomax_alpha, dlomax_prob_p, lower.tail = TRUE, return_type = "vector") {
   if(return_type == "data.frame") {
     p_grid_df <- rep(p, times = length(dlomax_prob_p) * length(dlomax_alpha))
@@ -271,6 +283,7 @@ qdiscretelomax <- function(p, dlomax_alpha, dlomax_prob_p, lower.tail = TRUE, re
         (1 - (1 - p_grid[which(dlomax_alpha_grid > 0)])^dlomax_alpha_grid[which(dlomax_alpha_grid > 0)]) / ((1 - p_grid[which(dlomax_alpha_grid > 0)])^(dlomax_alpha_grid[which(dlomax_alpha_grid > 0)]))
     )
   }
+  quant_out[which(p_grid == 0)] <- 1
 
   if(return_type == "data.frame") {
     return(data.frame(

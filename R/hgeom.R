@@ -51,7 +51,7 @@ dhgeom <- function(x, prob_p, prob_q, log = FALSE){
 #' @rdname hgeom
 #' @export
 phgeom <- function(q, prob_p, prob_q, lower.tail = TRUE, log.p = FALSE){
-  hgeom_check_args(prob_p, prob_q)
+  #hgeom_check_args(prob_p, prob_q)
   nep <- double(length(q))
   nep[which(q < 1)] <- 0
   nep[which(q == 1)] <- prob_q
@@ -65,7 +65,7 @@ phgeom <- function(q, prob_p, prob_q, lower.tail = TRUE, log.p = FALSE){
 #' @rdname hgeom
 #' @export
 qhgeom <- function(p, prob_p, prob_q, lower.tail = TRUE, log.p = FALSE){
-  hgeom_check_args(prob_p, prob_q)
+  #hgeom_check_args(prob_p, prob_q)
   x <- integer(length(p))
   if(log.p) {p <- exp(p)}
   if(!lower.tail) {p <- 1-p}
