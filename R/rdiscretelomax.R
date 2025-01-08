@@ -45,7 +45,7 @@ NULL
 
 #' @rdname discretelomax
 #' @export
-ddiscretelomax <- function(x, dlomax_alpha, dlomax_prob_p, return_type = "vector") {
+ddiscretelomax <- function(x, dlomax_alpha, dlomax_prob_p, return_type = "vector", log = FALSE) {
   # PRESERVE ORIGINAL Xs IN CASE BAD ARGUMENTS ARE GIVEN BUT WE STILL WANT TO
   # RETURN A DATAFRAME WITH DETAILS
   if(return_type == "data.frame") {
@@ -67,15 +67,19 @@ ddiscretelomax <- function(x, dlomax_alpha, dlomax_prob_p, return_type = "vector
   # Create vector of probabilities to return
   prob_out <- numeric(length(dlomax_alpha_grid))
 
-  prob_out[which(dlomax_alpha_grid == 0)] <- dgeom(
+  # Calculate probs for the cases alpha = 0 and alpha > 0. In practice, I need
+  #' to fudge it a bit by writing the condition as alpha < small number or
+  #' alpha >= small number.
+  prob_out[which(dlomax_alpha_grid <= 10e-5)] <- dgeom(
     x = x - 1,
-    prob = dlomax_prob_p_grid[which(dlomax_alpha_grid == 0)])
-  prob_out[which(dlomax_alpha_grid > 0)] <- {
-    (1 - dlomax_alpha_grid[which(dlomax_alpha_grid > 0)]*(x-1)*log(1-dlomax_prob_p_grid[which(dlomax_alpha_grid > 0)])
-    )^(-1/dlomax_alpha_grid[which(dlomax_alpha_grid > 0)]) - (
-      1 - dlomax_alpha_grid[which(dlomax_alpha_grid > 0)]*x*log(1-dlomax_prob_p_grid[which(dlomax_alpha_grid > 0)])
-    )^(-1/dlomax_alpha_grid[which(dlomax_alpha_grid > 0)])
+    prob = dlomax_prob_p_grid[which(dlomax_alpha_grid <= 10e-5)])
+  prob_out[which(dlomax_alpha_grid > 10e-5)] <- {
+    (1 - dlomax_alpha_grid[which(dlomax_alpha_grid > 10e-5)]*(x-1)*log(1-dlomax_prob_p_grid[which(dlomax_alpha_grid > 10e-5)])
+    )^(-1/dlomax_alpha_grid[which(dlomax_alpha_grid > 10e-5)]) - (
+      1 - dlomax_alpha_grid[which(dlomax_alpha_grid > 10e-5)]*x*log(1-dlomax_prob_p_grid[which(dlomax_alpha_grid > 10e-5)])
+    )^(-1/dlomax_alpha_grid[which(dlomax_alpha_grid > 10e-5)])
   }
+  if(log) {prob_out <- log(prob_out)}
   if(return_type == "data.frame") {
     return(data.frame(
       x = x_grid_df,
