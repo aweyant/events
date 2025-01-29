@@ -68,8 +68,8 @@ ddiscretelomax <- function(x, dlomax_alpha, dlomax_prob_p, return_type = "vector
   prob_out <- numeric(length(dlomax_alpha_grid))
 
   # Calculate probs for the cases alpha = 0 and alpha > 0. In practice, I need
-  #' to fudge it a bit by writing the condition as alpha < small number or
-  #' alpha >= small number.
+  # to fudge it a bit by writing the condition as alpha < small number or
+  # alpha >= small number.
   prob_out[which(dlomax_alpha_grid <= 10e-5)] <- dgeom(
     x = x - 1,
     prob = dlomax_prob_p_grid[which(dlomax_alpha_grid <= 10e-5)])

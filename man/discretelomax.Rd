@@ -8,7 +8,13 @@
 \alias{qdiscretelomax}
 \title{Discrete Lomax (Pareto II) Distribution}
 \usage{
-ddiscretelomax(x, dlomax_alpha, dlomax_prob_p, return_type = "vector")
+ddiscretelomax(
+  x,
+  dlomax_alpha,
+  dlomax_prob_p,
+  return_type = "vector",
+  log = FALSE
+)
 
 rdiscretelomax(n, dlomax_alpha, dlomax_prob_p)
 
