@@ -1,5 +1,5 @@
 test_that("pteddt direct evaluation agrees with promise evaluation", {
-  q = 100; length = 2; threshold = 20
+  q = 50; length = 2; threshold = 20
   prob_p = 0.6; prob_q = 0.7
   alpha = 0.02; beta = 0.04
   event_length_arg_name = "n"

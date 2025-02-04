@@ -3,7 +3,7 @@
 \name{hdiscretelomax}
 \alias{hdiscretelomax}
 \alias{dhdiscretelomax}
-\title{The Hurdle Discrete}
+\title{The Hurdle Discrete Pareto Distribution}
 \usage{
 hgeom(x, q, p, n, prob_p, prob_q, log, log.p, lower.tail)
 
@@ -45,4 +45,11 @@ dlomax_alpha, and dlomax_prob_p. This is practically a hurdle geometric
 distribution when dlomax_alpha is near 0. References to "bernoulli trials"
 and the like here are not formally valid, but are instructive. Deviations
 from the actual geometric distribution are written in parentheses.
+}
+\examples{
+# Comparing hurdle discrete Lomax to hurdle discrete geometric mass functions
+plot(dhdiscretelomax(x = 1:10, prob_q = 0.7, dlomax_prob_p = 0.6, dlomax_alpha = 0.3))
+points(dhdiscretelomax(x = 1:10, prob_q = 0.7, dlomax_prob_p = 0.6, dlomax_alpha = 0), col = 'red')
+
+plot(dhdiscretelomax(x = 1:10, prob_q = 0.7, dlomax_prob_p = 0.6, dlomax_alpha = 0.3)/dhdiscretelomax(x = 1:10, prob_q = 0.7, dlomax_prob_p = 0.6, dlomax_alpha = 0))
 }

@@ -1,4 +1,4 @@
-#' The Hurdle Discrete
+#' The Hurdle Discrete Pareto Distribution
 #'
 #' Density, distribution function, quantile function and random generation for
 #' the 1-inflated discrete lomax distribution with parameters prob_q,
@@ -39,7 +39,7 @@ hdiscretelomax <- function(x, q, p, n, prob_q, dlomax_alpha, dlomax_prob_p,
 
 #' @rdname hdiscretelomax
 #'
-#' @example
+#' @examples
 #' # Comparing hurdle discrete Lomax to hurdle discrete geometric mass functions
 #' plot(dhdiscretelomax(x = 1:10, prob_q = 0.7, dlomax_prob_p = 0.6, dlomax_alpha = 0.3))
 #' points(dhdiscretelomax(x = 1:10, prob_q = 0.7, dlomax_prob_p = 0.6, dlomax_alpha = 0), col = 'red')
@@ -55,4 +55,13 @@ dhdiscretelomax <- function(x, prob_q, dlomax_prob_p, dlomax_alpha, log = FALSE)
 
   if(log) {prob_out <- log(prob_out)}
   prob_out
+}
+
+#' @rdname hdiscretelomax
+#' @export
+rhdiscretelomax <- function(n, prob_q, dlomax_prob_p, dlomax_alpha, log = FALSE) {
+  n_out <- 1 + stats::rbinom(n = n, size = 1, prob = 1 - prob_q)
+  n_gt_1 <- sum(n_out) - n
+  n_out[which(n_out > 1)] <- 1 + rdiscretelomax(n = n_gt_1, dlomax_alpha, dlomax_prob_p)
+  n_out
 }

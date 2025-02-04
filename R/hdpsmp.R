@@ -15,17 +15,16 @@
 #' @name hdpsmp
 NULL
 
-#' #' @rdname hdpsmp
-#' #' @export
-#' rhdpsmp <- function(n, alpha, beta, prob_q, dlomax_prob_p, dlomax_alpha, rounding = FALSE) {
-#'   rsmp(n = n,
-#'        m = rhdiscretepareto(n = n, prob_q = prob_q,
-#'                             dlomax_prob_p = dlomax_prob_p,
-#'                             dlomax_alpha = dlomax_alpha),
-#'        alpha = alpha,
-#'        beta = beta,
-#'        rounding = rounding)
-#' }
+#' @rdname hdpsmp
+#' @export
+rhdpsmp <- function(n, alpha, beta, prob_q, dlomax_prob_p, dlomax_alpha, rounding = FALSE) {
+  rsmp(n = n,
+       m = rhdiscretelomax(n = n, prob_q = prob_q,
+                            dlomax_prob_p = dlomax_prob_p,
+                            dlomax_alpha = dlomax_alpha),
+       alpha = alpha, beta = beta,
+       rounding = rounding)
+}
 
 #' @rdname hdpsmp
 #' @export
@@ -73,7 +72,7 @@ phdpsmp_wrapped <- function(...) {
 }
 
 #' @rdname hdpsmp
-#' @example
+#' @examples
 #' 1/(1-phdpsmpdt(q = 12, threshold = 1, alpha = 0.2, beta = 1/0.4,
 #' prob_q = 0.7, dlomax_prob_p = 0.6, dlomax_alpha = 0.3))
 #'
