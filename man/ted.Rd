@@ -19,8 +19,8 @@ pteddt(
   event_magnitude_conditional_cdf,
   event_magnitude_conditional_cdf_args,
   lower.tail = TRUE,
-  tol = 10^(-6),
-  max_N = 100
+  tol = 10^(-10),
+  max_N = 10 * (2^8)
 )
 
 psdeddt(
@@ -48,8 +48,8 @@ construct_pted(
   event_duration_marginal_pmf,
   pbed_argument_transformations,
   env = parent.frame(),
-  tol = 10^(-6),
-  max_N = 160
+  tol = 10^(-10),
+  max_N = 10 * (2^8)
 )
 }
 \arguments{

@@ -2,12 +2,15 @@
 % Please edit documentation in R/hdpsmp.R
 \name{hdpsmp}
 \alias{hdpsmp}
+\alias{rhdpsmp}
 \alias{phdpsmp}
 \alias{phdpsmpdt}
 \alias{qhdpsmpdt}
 \alias{cdf_hdpsmp}
 \title{\strong{H}urdle \strong{D}iscrete \strong{P}areto \strong{S}ums & \strong{M}axima of \strong{P}areto II Vectors}
 \usage{
+rhdpsmp(n, alpha, beta, prob_q, dlomax_prob_p, dlomax_alpha, rounding = FALSE)
+
 phdpsmp(
   x_lower = 0,
   x_upper = Inf,
@@ -49,6 +52,18 @@ qhdpsmpdt(
 cdf_hdpsmp(x, y, n, alpha, beta, prob_q, dlomax_prob_p, dlomax_alpha)
 }
 \arguments{
+\item{n}{when provided to rsmp, this is the number of observations. Otherwise
+it represents the duration of an event.}
+
+\item{alpha, beta}{tail/shape parameter and scale parameters of a Multivariate
+Pareto II distribution (see details for the parameterization used).}
+
+\item{prob_q}{probability of success in the first trial. \eqn{0 \le} prob_q \eqn{\le 1}}
+
+\item{rounding}{logical; if TRUE, generated Pareto II values are rounded to
+the nearest whole number. This feature is present in case this is important
+for a comparison of actual observations to some theoretical output.}
+
 \item{x_lower, x_upper, y_lower, y_upper}{each are individual numbers; limits of
 integration of the SMP CDF}
 
@@ -57,11 +72,6 @@ for the duration of the a trivariate distribution, where n_lower is the
 lowest duration included in the summation and n_upper is the largest included
 in the summation; for example, n_lower = 3, n_upper = 5 sums over {3,4,5},
 whereas n_lower = 3, n_upper = 3 sums over {3}.}
-
-\item{alpha, beta}{tail/shape parameter and scale parameters of a Multivariate
-Pareto II distribution (see details for the parameterization used).}
-
-\item{prob_q}{probability of success in the first trial. \eqn{0 \le} prob_q \eqn{\le 1}}
 
 \item{q}{a number; value given univariate functions of univariate marginals}
 
@@ -76,10 +86,14 @@ which an observation would be considered part of an event}
 \item{p}{vector of probabilities.}
 
 \item{x, y}{numbers; magnitude and maxima of a Pareto II vector}
-
-\item{n}{when provided to rsmp, this is the number of observations. Otherwise
-it represents the duration of an event.}
 }
 \description{
 Probability and random generation functions for the trivariate HDPSMP distribution
+}
+\examples{
+1/(1-phdpsmpdt(q = 12, threshold = 1, alpha = 0.2, beta = 1/0.4,
+prob_q = 0.7, dlomax_prob_p = 0.6, dlomax_alpha = 0.3))
+
+1/(1-phdpsmpdt(q = 12, threshold = 1, alpha = 0.2, beta = 1/0.4,
+prob_q = 0.7, dlomax_prob_p = 0.6, dlomax_alpha = 0))
 }

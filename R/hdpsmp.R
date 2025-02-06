@@ -29,17 +29,11 @@ rhdpsmp <- function(n, alpha, beta, prob_q, dlomax_prob_p, dlomax_alpha, roundin
 #' @rdname hdpsmp
 #' @export
 phdpsmp <- function(
-    x_lower = 0,
-    x_upper = Inf,
-    y_lower = 0,
-    y_upper = Inf,
-    n_lower = 1,
-    n_upper = Inf,
-    alpha,
-    beta,
-    prob_q,
-    dlomax_prob_p,
-    dlomax_alpha) {
+    x_lower = 0, x_upper = Inf,
+    y_lower = 0, y_upper = Inf,
+    n_lower = 1, n_upper = Inf,
+    alpha, beta,
+    prob_q, dlomax_prob_p, dlomax_alpha) {
   phdpsmp_wrapped()(x_lower = x_lower,
                    x_upper = x_upper,
                    y_lower = y_lower,
@@ -67,8 +61,8 @@ phdpsmp_wrapped <- function(...) {
                  pbed = psmp,
                  event_duration_marginal_pmf = dhdiscretelomax,
                  pbed_argument_transformations = list("n = k"),
-                 tol = 10^(-6),
-                 max_N = 160)
+                 tol = 10^(-10),
+                 max_N = 10*(2^8))
 }
 
 #' @rdname hdpsmp
@@ -126,7 +120,7 @@ qhdpsmpdt_wrapped <- function(...) {
                      cdf = phdpsmpdt,
                      cdf_support = c(0, Inf),
                      cdf_search_interval = c(0, 10000),
-                     tol = 1e-6,
+                     tol = 1e-10,
                      env = parent.frame())
 }
 

@@ -3,11 +3,24 @@
 \name{hdiscretelomax}
 \alias{hdiscretelomax}
 \alias{dhdiscretelomax}
+\alias{rhdiscretelomax}
+\alias{phdiscretelomax}
 \title{The Hurdle Discrete Pareto Distribution}
 \usage{
 hgeom(x, q, p, n, prob_p, prob_q, log, log.p, lower.tail)
 
 dhdiscretelomax(x, prob_q, dlomax_prob_p, dlomax_alpha, log = FALSE)
+
+rhdiscretelomax(n, prob_q, dlomax_prob_p, dlomax_alpha, log = FALSE)
+
+phdiscretelomax(
+  q,
+  prob_q,
+  dlomax_alpha,
+  dlomax_prob_p,
+  lower.tail = TRUE,
+  log.p = FALSE
+)
 }
 \arguments{
 \item{x, q}{vector of quantiles representing the number of failures in a
@@ -36,6 +49,9 @@ dhdiscretelomax gives the density, phdiscretelomax gives the distribution
 function, qhdiscretelomax, gives the quantile function, and rhdiscretelomax
 generates random deviates.
 
+phdiscretelomax and qhdiscretelomax are currently slow placeholders and
+should be vectorized in the future.
+
 Invalid dlomax_prob_p or prob_q will result in return value NaN, with a warning.
 }
 \description{
@@ -48,6 +64,9 @@ from the actual geometric distribution are written in parentheses.
 }
 \examples{
 # Comparing hurdle discrete Lomax to hurdle discrete geometric mass functions
+
+log10(1-sum(dhdiscretelomax(x = 1:10, prob_q = 0.7, dlomax_prob_p = 0.6, dlomax_alpha = 0.3)))
+
 plot(dhdiscretelomax(x = 1:10, prob_q = 0.7, dlomax_prob_p = 0.6, dlomax_alpha = 0.3))
 points(dhdiscretelomax(x = 1:10, prob_q = 0.7, dlomax_prob_p = 0.6, dlomax_alpha = 0), col = 'red')
 

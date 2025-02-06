@@ -27,6 +27,9 @@
 #'  function, qhdiscretelomax, gives the quantile function, and rhdiscretelomax
 #'  generates random deviates.
 #'
+#'  phdiscretelomax and qhdiscretelomax are currently slow placeholders and
+#'  should be vectorized in the future.
+#'
 #'  Invalid dlomax_prob_p or prob_q will result in return value NaN, with a warning.
 #'
 #' @rdname hdiscretelomax
@@ -41,6 +44,9 @@ hdiscretelomax <- function(x, q, p, n, prob_q, dlomax_alpha, dlomax_prob_p,
 #'
 #' @examples
 #' # Comparing hurdle discrete Lomax to hurdle discrete geometric mass functions
+#'
+#' log10(1-sum(dhdiscretelomax(x = 1:10, prob_q = 0.7, dlomax_prob_p = 0.6, dlomax_alpha = 0.3)))
+#'
 #' plot(dhdiscretelomax(x = 1:10, prob_q = 0.7, dlomax_prob_p = 0.6, dlomax_alpha = 0.3))
 #' points(dhdiscretelomax(x = 1:10, prob_q = 0.7, dlomax_prob_p = 0.6, dlomax_alpha = 0), col = 'red')
 #'
@@ -64,4 +70,32 @@ rhdiscretelomax <- function(n, prob_q, dlomax_prob_p, dlomax_alpha, log = FALSE)
   n_gt_1 <- sum(n_out) - n
   n_out[which(n_out > 1)] <- 1 + rdiscretelomax(n = n_gt_1, dlomax_alpha, dlomax_prob_p)
   n_out
+}
+
+#' @rdname hdiscretelomax
+#' @example
+#' phdiscretelomax(q = 3, prob_q = 0.6, dlomax_alpha = 0.3, dlomax_prob_p = 0.7)
+#' @export
+phdiscretelomax <- function(q, prob_q, dlomax_alpha, dlomax_prob_p,
+                            lower.tail = TRUE, log.p = FALSE) {
+  # CHECK X INPUT
+  discretelomax_check_q()
+  # CHECK PARAMETERS
+  discretelomax_check_param_args()
+
+  # Create vector of probabilities to return
+  prob_out <- numeric(length(q))
+
+  prob_out <- sum(dhdiscretelomax(x = 1:q,
+                                  prob_q = prob_q, dlomax_prob_p = dlomax_prob_p,
+                                  dlomax_alpha = dlomax_alpha))
+
+  if(log.p) {
+    prob_out = log(prob_out)
+  }
+  if(!lower.tail) {
+    prob_out <- 1 - prob_out
+  }
+
+  return(prob_out)
 }

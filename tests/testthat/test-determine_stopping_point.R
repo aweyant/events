@@ -1,14 +1,14 @@
 test_that("stopping point of a geometric distribution with param p = 0.1 is correctly determined", {
   expect_equal(determine_stopping_point(event_duration_marginal_pmf = dhgeom,
                                         event_duration_marginal_pmf_args = list(prob_q = 0.1,
-                                                                                prob_p = 0.1), max_N = 200), 160)
+                                                                                prob_p = 0.1), max_N = 1000), 320)
 })
 
 test_that("stopping point of a geometric distribution with param p = 0.1 is correctly determined, even when a user-provided lower.tail = FALSE argument is given", {
   expect_equal(determine_stopping_point(dhgeom,
                                         list(prob_p = 0.1,
                                              prob_q = 0.1),
-                                        max_N = 200), 160)
+                                        max_N = 1000), 320)
 })
 
 test_that("the search for the stopping point of a geometric distribution with param p = 0.1 throws an error when max_N is set too low", {
@@ -16,3 +16,17 @@ test_that("the search for the stopping point of a geometric distribution with pa
                                         list(prob_p = 0.1, prob_q = 0.1),
                                         max_N = 20))
 })
+
+
+test_that("stopping point is found for an actual estimated set of parameters", {
+  dlomax_alpha = 0.365; dlomax_prob_p = 0.742; prob_q = 0.7
+  expect_equal(
+    determine_stopping_point(
+      dhdiscretelomax,
+      list(prob_q = prob_q, dlomax_prob_p = dlomax_prob_p, dlomax_alpha = dlomax_alpha),
+      max_N = 10*(2^9)
+    ),
+    10240
+  )
+})
+

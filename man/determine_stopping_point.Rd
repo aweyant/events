@@ -7,8 +7,8 @@
 determine_stopping_point(
   event_duration_marginal_pmf,
   event_duration_marginal_pmf_args,
-  tol = 10^(-6),
-  max_N = 160
+  tol = 10^(-10),
+  max_N = 10 * (2^8)
 )
 }
 \arguments{
