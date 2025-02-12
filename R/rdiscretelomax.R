@@ -302,3 +302,25 @@ qdiscretelomax <- function(p, dlomax_alpha, dlomax_prob_p, lower.tail = TRUE, re
   }
 }
 
+meandiscretelomax <- function(dlomax_alpha, dlomax_prob_p, N = 1000) {
+  pow = 1
+  n = seq.int(from = 1, to = N, by = 1)
+  if(dlomax_alpha == 0) {
+    #if(pow < -log(1-dlomax_prob_p)) {
+      1/dlomax_prob_p
+    #}
+    #else{
+      #NaN
+    #}
+  }
+  else if (dlomax_alpha > 0 & pow < 1/dlomax_alpha) {
+    1 + sum(
+      (((n^(dlomax_alpha*pow)) / (1 - (dlomax_alpha * log(1 - dlomax_prob_p) * n)))^(1/dlomax_alpha)) *
+        ( (1+1/n)^pow -1 )
+    )
+  }
+  else {
+    NaN
+  }
+}
+

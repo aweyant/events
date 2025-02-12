@@ -8,7 +8,7 @@ determine_stopping_point(
   event_duration_marginal_pmf,
   event_duration_marginal_pmf_args,
   tol = 10^(-10),
-  max_N = 10 * (2^8)
+  max_N = 10 * (2^9)
 )
 }
 \arguments{
@@ -33,5 +33,5 @@ finds the duration we need to calculate the marginal probabilities to an
 arbitrary precision (the "tol").
 }
 \examples{
-determine_stopping_point(pgeom, list(prob = 0.1), max_N = 200)
+determine_stopping_point(dhgeom, list(prob_q = 0.5, prob_p = 0.5), max_N = 200)
 }

@@ -96,4 +96,13 @@ prob_q = 0.7, dlomax_prob_p = 0.6, dlomax_alpha = 0.3))
 
 1/(1-phdpsmpdt(q = 12, threshold = 1, alpha = 0.2, beta = 1/0.4,
 prob_q = 0.7, dlomax_prob_p = 0.6, dlomax_alpha = 0))
+mean = 2; p_0 = 1/mean; alpha_0 = 0
+alpha_1 = 0.1; p_1 = 0.538632
+alpha_2 = 0.3; p_2 = 0.6348
+qhdpsmpdt(p = 0.999,threshold = 1, alpha = 0.2, beta = 1,
+prob_q = 0.7, dlomax_prob_p = p_0, dlomax_alpha = alpha_0)
+qhdpsmpdt(p = 0.999,threshold = 1, alpha = 0.2, beta = 1,
+prob_q = 0.7, dlomax_prob_p = p_1, dlomax_alpha = alpha_1)
+qhdpsmpdt(p = 0.999,threshold = 1, alpha = 0.2, beta = 1,
+prob_q = 0.7, dlomax_prob_p = p_2, dlomax_alpha = alpha_2)
 }

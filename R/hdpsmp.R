@@ -95,8 +95,16 @@ phdpsmpdt_wrapped <- function(...) {
 }
 
 #' @rdname hdpsmp
-#' @example
-#' qhdpsmpdt(p = 0.999,threshold = 1, alpha = 0.2, beta = 1/0.4, prob_q = 0.7, dlomax_prob_p = 0.6, dlomax_alpha = 0.3)
+#' @examples
+#' mean = 2; p_0 = 1/mean; alpha_0 = 0
+#' alpha_1 = 0.1; p_1 = 0.538632
+#' alpha_2 = 0.3; p_2 = 0.6348
+#' qhdpsmpdt(p = 0.999,threshold = 1, alpha = 0.2, beta = 1,
+#' prob_q = 0.7, dlomax_prob_p = p_0, dlomax_alpha = alpha_0)
+#' qhdpsmpdt(p = 0.999,threshold = 1, alpha = 0.2, beta = 1,
+#' prob_q = 0.7, dlomax_prob_p = p_1, dlomax_alpha = alpha_1)
+#' qhdpsmpdt(p = 0.999,threshold = 1, alpha = 0.2, beta = 1,
+#' prob_q = 0.7, dlomax_prob_p = p_2, dlomax_alpha = alpha_2)
 #' @export
 qhdpsmpdt <- function(p, threshold,
                      alpha, beta,
@@ -149,3 +157,30 @@ cdf_hdpsmp_wrapped <- function(...) {
                     event_duration_marginal_pmf = dhdiscretelomax,
                     conditional_cdf_argument_transformations = list("n = k"))
 }
+
+#' #' @rdname hdpsmp
+#' #' @export
+#' qhdpsmpdt <- function(p, threshold,
+#'                      alpha, beta,
+#'                      prob_q, dlomax_prob_p, dlomax_alpha,
+#'                      lower.tail = TRUE,
+#'                      log = FALSE) {
+#'   qhdpsmpdt_wrapped()(p = p,
+#'                      threshold = threshold,
+#'                      alpha = alpha,
+#'                      beta = beta,
+#'                      prob_q = prob_q,
+#'                      dlomax_prob_p = dlomax_prob_p,
+#'                      dlomax_alpha = dlomax_alpha,
+#'                      lower.tail = lower.tail,
+#'                      log = log)}
+#'
+#' qhspsmpdt_wrapped <- function(...) {
+#'   construct_quantile(args = c(alist(p = ),
+#'                               formals(phdpsmpdt)[-1]),
+#'                      cdf = phgsmpdt,
+#'                      cdf_support = c(0, Inf),
+#'                      cdf_search_interval = c(0, 10000),
+#'                      tol = 1e-8,
+#'                      env = parent.frame())
+#' }

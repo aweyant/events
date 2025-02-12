@@ -20,7 +20,7 @@ pteddt(
   event_magnitude_conditional_cdf_args,
   lower.tail = TRUE,
   tol = 10^(-10),
-  max_N = 10 * (2^8)
+  max_N = 10 * (2^9)
 )
 
 psdeddt(
@@ -49,7 +49,7 @@ construct_pted(
   pbed_argument_transformations,
   env = parent.frame(),
   tol = 10^(-10),
-  max_N = 10 * (2^8)
+  max_N = 10 * (2^9)
 )
 }
 \arguments{

@@ -404,7 +404,7 @@ construct_pteddt <- function(args, # q, threshold, lower.tail, log.p
 #' an integer
 #'
 #' @examples
-#' determine_stopping_point(pgeom, list(prob = 0.1), max_N = 200)
+#' determine_stopping_point(dhgeom, list(prob_q = 0.5, prob_p = 0.5), max_N = 200)
 #' @export
 determine_stopping_point <- function(event_duration_marginal_pmf,
                                      event_duration_marginal_pmf_args,
@@ -422,21 +422,27 @@ determine_stopping_point <- function(event_duration_marginal_pmf,
 
   suppressWarnings({
     event_duration_marginal_pmf_args <- within(event_duration_marginal_pmf_args, rm("x"))
+    event_duration_marginal_pmf_args <- within(event_duration_marginal_pmf_args, x <- 1:N)
     event_duration_marginal_pmf_args <- within(event_duration_marginal_pmf_args, rm("log"))
   })
 
   while(1 - sum(
-    eval(
-      parse(
-        text = paste0("vapply(X = seq(1,N,1),FUN = event_duration_marginal_pmf,FUN.VALUE = numeric(1),",paste(names(event_duration_marginal_pmf_args), "=", unlist(event_duration_marginal_pmf_args), collapse = ","), ")")
-        )
-      )
+    do.call(what = event_duration_marginal_pmf,
+            args = event_duration_marginal_pmf_args)
+    # eval(
+    #   parse(
+    #     text = paste0("vapply(X = seq(1,N,1),FUN = event_duration_marginal_pmf,FUN.VALUE = numeric(1),",paste(names(event_duration_marginal_pmf_args), "=", unlist(event_duration_marginal_pmf_args), collapse = ","), ")")
+    #     )
+    #   )
     ) > tol) {
     if(N > max_N) {
       max_N_exceeded <- TRUE
       break
     }
     N <- 2*N
+    #print(paste0("Here at N = ", N))
+    event_duration_marginal_pmf_args$x <- 1:N
+    #print(paste0("pmf_args are now ", event_duration_marginal_pmf_args))
   }
   if(max_N_exceeded) {
     message("max_N exceeded. Check your event duration marginal PMF or set max_N to a higher value.")
