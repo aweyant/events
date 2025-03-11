@@ -71,4 +71,11 @@ plot(dhdiscretelomax(x = 1:10, prob_q = 0.7, dlomax_prob_p = 0.6, dlomax_alpha =
 points(dhdiscretelomax(x = 1:10, prob_q = 0.7, dlomax_prob_p = 0.6, dlomax_alpha = 0), col = 'red')
 
 plot(dhdiscretelomax(x = 1:10, prob_q = 0.7, dlomax_prob_p = 0.6, dlomax_alpha = 0.3)/dhdiscretelomax(x = 1:10, prob_q = 0.7, dlomax_prob_p = 0.6, dlomax_alpha = 0))
+
+# Generating random values for kicks
+mean_annual_n_events = 26.1; N_years = 90
+prob_q = 0.699; dlomax_prob_p = 0.681; dlomax_alpha = 0.336
+alpha = 0.0960; beta = 0.101
+rhdiscretelomax(n = mean_annual_n_events * N_years,
+prob_q; dlomax_prob_p, dlomax_alpha, log = FALSE)
 }

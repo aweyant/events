@@ -17,7 +17,8 @@ NULL
 
 #' @rdname hdpsmp
 #' @export
-rhdpsmp <- function(n, alpha, beta, prob_q, dlomax_prob_p, dlomax_alpha, rounding = FALSE) {
+rhdpsmp <- function(n, alpha, beta, prob_q, dlomax_prob_p, dlomax_alpha,
+                    rounding = FALSE) {
   rsmp(n = n,
        m = rhdiscretelomax(n = n, prob_q = prob_q,
                             dlomax_prob_p = dlomax_prob_p,
@@ -61,8 +62,8 @@ phdpsmp_wrapped <- function(...) {
                  pbed = psmp,
                  event_duration_marginal_pmf = dhdiscretelomax,
                  pbed_argument_transformations = list("n = k"),
-                 tol = 10^(-10),
-                 max_N = 10*(2^8))
+                 tol = 1e-6,
+                 max_N = 10*(2^9))
 }
 
 #' @rdname hdpsmp

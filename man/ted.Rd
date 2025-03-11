@@ -19,7 +19,7 @@ pteddt(
   event_magnitude_conditional_cdf,
   event_magnitude_conditional_cdf_args,
   lower.tail = TRUE,
-  tol = 10^(-10),
+  tol = 1e-06,
   max_N = 10 * (2^9)
 )
 
@@ -48,7 +48,7 @@ construct_pted(
   event_duration_marginal_pmf,
   pbed_argument_transformations,
   env = parent.frame(),
-  tol = 10^(-10),
+  tol = 1e-06,
   max_N = 10 * (2^9)
 )
 }

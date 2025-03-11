@@ -46,7 +46,7 @@ pteddt <- function(q = NULL,
                    event_magnitude_conditional_cdf,
                    event_magnitude_conditional_cdf_args,
                    lower.tail = TRUE,
-                   tol = 10^(-10),
+                   tol = 1e-6,
                    max_N = 10*(2^9)) {
   evaluate_cdf <- FALSE
   if(!is.null(q)) {evaluate_cdf <- TRUE}
@@ -287,7 +287,7 @@ construct_pted <- function(args,
                            event_duration_marginal_pmf,
                            pbed_argument_transformations,
                            env = parent.frame(),
-                           tol = 10^(-10),
+                           tol = 1e-6,
                            max_N = 10*(2^9)) {
   body = substitute({
     arguments = c(as.list(environment()))
@@ -336,7 +336,7 @@ construct_pteddt <- function(args, # q, threshold, lower.tail, log.p
                              event_duration_marginal_pmf,
                              event_magnitude_conditional_cdf_argument_transformations,
                              env = parent.frame(),
-                             tol = 10^(-10),
+                             tol = 1e-6,
                              max_N = 10*(2^9)) {
   body = substitute({
     arguments = c(as.list(environment()))
@@ -408,7 +408,7 @@ construct_pteddt <- function(args, # q, threshold, lower.tail, log.p
 #' @export
 determine_stopping_point <- function(event_duration_marginal_pmf,
                                      event_duration_marginal_pmf_args,
-                                     tol = 10^(-10),
+                                     tol = 1e-6,
                                      max_N = 10*(2^9)) {
   # make sure that given lower.tail arguments are non-contradictory
   # if(!is.null(event_duration_marginal_pmf_args$lower.tail)){

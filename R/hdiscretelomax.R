@@ -64,11 +64,25 @@ dhdiscretelomax <- function(x, prob_q, dlomax_prob_p, dlomax_alpha, log = FALSE)
 }
 
 #' @rdname hdiscretelomax
+#' @examples
+#'
+#' # Generating random values for kicks
+#' mean_annual_n_events = 26.1; N_years = 90
+#' prob_q = 0.699; dlomax_prob_p = 0.681; dlomax_alpha = 0.336
+#' alpha = 0.0960; beta = 0.101
+#' rhdiscretelomax(n = mean_annual_n_events * N_years,
+#' prob_q; dlomax_prob_p, dlomax_alpha, log = FALSE)
 #' @export
 rhdiscretelomax <- function(n, prob_q, dlomax_prob_p, dlomax_alpha, log = FALSE) {
+  # Random binary vector consisting of 1s and 2s, with 1s comprising prob_q of
+  # the whole.
   n_out <- 1 + stats::rbinom(n = n, size = 1, prob = 1 - prob_q)
+  # The number of 2s in n_out is the sum of n_out's entries minus its length.
   n_gt_1 <- sum(n_out) - n
-  n_out[which(n_out > 1)] <- 1 + rdiscretelomax(n = n_gt_1, dlomax_alpha, dlomax_prob_p)
+  # Entries of n_out which are greater than 1 are replaced by random discrete
+  # lomax numbers plus 1.
+  n_out[which(n_out > 1)] <- 1 + rdiscretelomax(n = n_gt_1, dlomax_alpha,
+                                                dlomax_prob_p)
   n_out
 }
 
