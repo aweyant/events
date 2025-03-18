@@ -71,7 +71,7 @@ dhdiscretelomax <- function(x, prob_q, dlomax_prob_p, dlomax_alpha, log = FALSE)
 #' prob_q = 0.699; dlomax_prob_p = 0.681; dlomax_alpha = 0.336
 #' alpha = 0.0960; beta = 0.101
 #' rhdiscretelomax(n = mean_annual_n_events * N_years,
-#' prob_q; dlomax_prob_p, dlomax_alpha, log = FALSE)
+#' prob_q, dlomax_prob_p, dlomax_alpha, log = FALSE)
 #' @export
 rhdiscretelomax <- function(n, prob_q, dlomax_prob_p, dlomax_alpha, log = FALSE) {
   # Random binary vector consisting of 1s and 2s, with 1s comprising prob_q of
