@@ -21,15 +21,25 @@ NULL
 #' @examples
 #' v <- c(333,587,0,201,82,225,70,62,47,101,187,NA,NA,126,222,86,NA,125)
 #' # ^^ perhaps precipitation measured in 10ths of mm, with some missing values
-#' #' in the mix
+#' # in the mix
 #' create_events_from_vector(v, 100)
 #'
 #' df <- data.frame(
 #' precip = v,
 #' tmax = rnorm(n = 18, mean = 10, sd = 2),
+#' threshold = 100,
 #' date = seq.Date(from = as.Date("2025-01-01"), by = "day", length.out = 19)[-10])
 #'
-#' create_events_from_table(df = df, var = "precip", aux_vars = "tmax")
+#' event_var = "precip"
+#' thresh_col = "threshold"
+#' time_col = "date"
+#'
+#' aux_vars = c("tmax", "tmin")
+#' aux_funs = list(max = max, min = min, sum = sum, mean = mean)
+#'
+#' create_events_from_df(df = df, event_var = "precip",
+#' aux_vars = aux_vars, aux_funs = aux_funs,
+#' thresh_col = thresh_col, time_col = time_col)
 #'
 #'
 #' \dontrun{
@@ -74,43 +84,22 @@ create_events_from_vector <- function(v, threshold) {
 
 #' @rdname create_events
 #' @param df A data.frame of observations recorded at regular intervals (
-#' restricted, for now, to days). A column called 'date' must exist as well as
-#' var, specified by the user-provided argument var.
-#' @param var (character) the variable within df for which events are defined,
-#' e.g. "precip"
-#' @param time_colname (character) NOT YET IMPLEMENTED the name of the column
-#' with time information; "date" by default
-#' @param threshold_colname (character) NOT YET IMPLEMENTED the name of the
-#' column containing a pre-calcuated threshold; This option is provided for
-#' users who wish to experiment with thresholds beyond what threshold_desc
-#' allows for.
-#' @param threshold_desc (character) NOT YET IMPLEMENTED a string of a
-#' particular format (see )
-#' @param aux_vars (character vector) NOT YET IMPLEMENTED other variables within
-#' df which you want to summarize alongside events. For example, "tmin" might be
-#' of interest during precipitation events
-#' @param aux_funs (list of functions) NOT YET IMPLEMENTED summary functions to
-#' to apply to aux_vars
+#' restricted, for now, to days).
+#' @param event_var (character) the variable within df for which events are
+#' defined, e.g. "precip"
+#' @param time_col (character) the name of the column with time information;
+#' "date" by default, but it could also be something like "date_time_pacific"
+#' if finer-res data are to be considered
+#' @param thresh_col (character)the name of the column containing a
+#' pre-calcuated threshold
+#' @param aux_vars (character vector) other variables within df which you want
+#' to summarize alongside events. For example, "tmin" or some measure of
+#' stability might be of interest during precipitation events
+#' @param aux_funs (list of functions) summary functions to to apply to,
+#' aux_vars such as min or max; Internally, lists of functions are applied to
+#' multiple aux_vars by means of the dplyr package's mutate/summarize-across
+#' construct. See documentation for dplyr::across for details.
 #' @export
-create_events_from_table <- function(df, var,
-                                     time_colname = "date",
-                                     threshold_colname = NULL,
-                                     threshold_desc = "75p_above_0.3",
-                                     aux_vars = NULL,
-                                     aux_funs = list(min,max,mean)) {
-  # ADD EXPLICIT NAs WHENEVER OBS ARE MISSING
-  df <- df_complete_time_column(df)
-
-  threshold = threshold_given_desc(v = df[[var]], threshold_desc = threshold_desc)
-
-  out_list <- create_events_from_vector(v = df[[var]], threshold = threshold)
-
-  out_list$event_summaries_df$start_time <- df[[time_colname]][out_list$event_summaries_df$start_index]
-
-  out_list
-}
-
-
 create_events_from_df <- function(
     df, event_var = "precip", thresh_col = "threshold", time_col = "date",
     aux_vars = c("tmax", "tmin"),
@@ -135,7 +124,7 @@ create_events_from_df <- function(
       maximum = max(.data[[event_var]] - .data[[thresh_col]]),
       total = sum(.data[[event_var]]),
       abs_maximum = max(.data[[event_var]]),
-      dplyr::across(.cols = any_of(aux_vars), .fns = aux_funs),
+      dplyr::across(.cols = dplyr::any_of(aux_vars), .fns = aux_funs),
       .before = 1
     ) %>%
     dplyr::ungroup() %>%
@@ -162,8 +151,24 @@ create_events_from_df <- function(
     dplyr::ungroup() %>%
     dplyr::mutate(event_number = dplyr::row_number(), .before = 1) %>%
     dplyr::select(-any_of(c("run_id", "active_event", {{event_var}}, {{aux_vars}}, {{time_col}})))
+
+  return(list(unagg_events_df = unagg_events_df, agg_events_df = agg_events_df))
 }
 
-
-
-
+# create_events_from_table <- function(df, var,
+#                                      time_colname = "date",
+#                                      threshold_colname = NULL,
+#                                      threshold_desc = "75p_above_0.3",
+#                                      aux_vars = NULL,
+#                                      aux_funs = list(min,max,mean)) {
+#   # ADD EXPLICIT NAs WHENEVER OBS ARE MISSING
+#   df <- df_complete_time_column(df)
+#
+#   threshold = threshold_given_desc(v = df[[var]], threshold_desc = threshold_desc)
+#
+#   out_list <- create_events_from_vector(v = df[[var]], threshold = threshold)
+#
+#   out_list$event_summaries_df$start_time <- df[[time_colname]][out_list$event_summaries_df$start_index]
+#
+#   out_list
+# }

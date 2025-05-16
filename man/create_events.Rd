@@ -3,19 +3,18 @@
 \name{create_events}
 \alias{create_events}
 \alias{create_events_from_vector}
-\alias{create_events_from_table}
+\alias{create_events_from_df}
 \title{Create events from observed time series and a threshold}
 \usage{
 create_events_from_vector(v, threshold)
 
-create_events_from_table(
+create_events_from_df(
   df,
-  var,
-  time_colname = "date",
-  threshold_colname = NULL,
-  threshold_desc = "75p_above_0.3",
-  aux_vars = NULL,
-  aux_funs = list(min, max, mean)
+  event_var = "precip",
+  thresh_col = "threshold",
+  time_col = "date",
+  aux_vars = c("tmax", "tmin"),
+  aux_funs = list(max = max, min = min, sum = sum, mean = mean)
 )
 }
 \arguments{
@@ -27,29 +26,26 @@ or "gaps in observed series" must be explicitly filled with NAs.}
 which an observation would be considered part of an event}
 
 \item{df}{A data.frame of observations recorded at regular intervals (
-restricted, for now, to days). A column called 'date' must exist as well as
-var, specified by the user-provided argument var.}
+restricted, for now, to days).}
 
-\item{var}{(character) the variable within df for which events are defined,
-e.g. "precip"}
+\item{event_var}{(character) the variable within df for which events are
+defined, e.g. "precip"}
 
-\item{time_colname}{(character) NOT YET IMPLEMENTED the name of the column
-with time information; "date" by default}
+\item{thresh_col}{(character)the name of the column containing a
+pre-calcuated threshold}
 
-\item{threshold_colname}{(character) NOT YET IMPLEMENTED the name of the
-column containing a pre-calcuated threshold; This option is provided for
-users who wish to experiment with thresholds beyond what threshold_desc
-allows for.}
+\item{time_col}{(character) the name of the column with time information;
+"date" by default, but it could also be something like "date_time_pacific"
+if finer-res data are to be considered}
 
-\item{threshold_desc}{(character) NOT YET IMPLEMENTED a string of a
-particular format (see )}
+\item{aux_vars}{(character vector) other variables within df which you want
+to summarize alongside events. For example, "tmin" or some measure of
+stability might be of interest during precipitation events}
 
-\item{aux_vars}{(character vector) NOT YET IMPLEMENTED other variables within
-df which you want to summarize alongside events. For example, "tmin" might be
-of interest during precipitation events}
-
-\item{aux_funs}{(list of functions) NOT YET IMPLEMENTED summary functions to
-to apply to aux_vars}
+\item{aux_funs}{(list of functions) summary functions to to apply to,
+aux_vars such as min or max; Internally, lists of functions are applied to
+multiple aux_vars by means of the dplyr package's mutate/summarize-across
+construct. See documentation for dplyr::across for details.}
 }
 \value{
 A list containing:
@@ -67,15 +63,25 @@ Create events from observed time series and a threshold
 \examples{
 v <- c(333,587,0,201,82,225,70,62,47,101,187,NA,NA,126,222,86,NA,125)
 # ^^ perhaps precipitation measured in 10ths of mm, with some missing values
-#' in the mix
+# in the mix
 create_events_from_vector(v, 100)
 
 df <- data.frame(
 precip = v,
 tmax = rnorm(n = 18, mean = 10, sd = 2),
+threshold = 100,
 date = seq.Date(from = as.Date("2025-01-01"), by = "day", length.out = 19)[-10])
 
-create_events_from_table(df = df, var = "precip", aux_vars = "tmax")
+event_var = "precip"
+thresh_col = "threshold"
+time_col = "date"
+
+aux_vars = c("tmax", "tmin")
+aux_funs = list(max = max, min = min, sum = sum, mean = mean)
+
+create_events_from_df(df = df, event_var = "precip",
+aux_vars = aux_vars, aux_funs = aux_funs,
+thresh_col = thresh_col, time_col = time_col)
 
 
 \dontrun{
